@@ -2,7 +2,7 @@
 import pygame
 import sys
 from pygame.locals import *
-
+from StandingState import StandingState
 import Category
 
 from utility import unitVector, getSize
@@ -26,6 +26,7 @@ class Entity():
         self.lx        = 1
     	self.ly        = 1
         self.mVCorrection = [0,0]
+        self._state    = StandingState()
 
         _uniqueId+=1
 
