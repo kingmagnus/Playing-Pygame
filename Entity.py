@@ -3,6 +3,7 @@ import pygame
 import sys
 from pygame.locals import *
 from StandingState import StandingState
+from GraphicsComponent import *
 import Category
 
 from utility import unitVector, getSize
@@ -28,24 +29,18 @@ class Entity():
         self.mVCorrection = [0,0]
         self._state    = StandingState()
 
+        self._GraphicsComponent = GraphicsComponent()
+        #self._PhysicsComponent  = PhysicsComponent()
+        #self._InputComponent    = InputComponent()#(slef._State)
+
+        self.getSprite  = self._GraphicsComponent.getSprite
+        self.loadSprite = self._GraphicsComponent.loadSprite
+
         _uniqueId+=1
 
-    def loadSprite(self, filename, rectangle):
-        """ loads a sprite to the entity with AABB rectangle """
-        self.mSprite = pygame.image.load(filename).convert()
-        self.AABB = pygame.Rect(rectangle)
-
-    def getSprite(self, sprite, rectangle):
-        self.mSprite = sprite
-        self.AABB = pygame.Rect(rectangle)
-
     def draw(self, surface, drawBounds = False):
-        """ places mSprite onto the surface with topleft at mLocation """
-
-        #we pass blit a rect, blit takes either a pair of coordinates or a rect, if rect it takes topleft
-        surface.blit(self.mSprite, self.AABB)
-        if drawBounds:
-            pygame.draw.rect(surface, Color("red"), self.AABB, 1)
+        """ calls the grapihcs component """
+        self._GraphicsComponent.update(self, surface)
 
 
     def update(self, dt):
@@ -90,7 +85,8 @@ class Entity():
         self.AABB  = camAplyView(self.AABB)
         self.mLocation = self.AABB.topleft
         
-
+    def setArea(self, rect):
+        self.AABB = pygame.Rect(rect)
 
 
 
