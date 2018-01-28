@@ -10,6 +10,8 @@ import Category
 import CollisionHandling
 import Camera
 
+
+
 BACKGROUND  = 0
 ACTIVELAYER = 1
 FORGROUND   = 2
@@ -39,6 +41,10 @@ class World():
 
     def update(self, commandQueue, dt):
         """Applies the command Queue to the entities, finds how the orld should respond (collisions ect.) and then updates the entities """
+
+        #Add a command asking for the player entity to look for input
+        #note that we use an optional paramiter to pass the lambda access to the command queue
+        commandQueue.append( Command( action = lambda entity, dt, cq = commandQueue: entity._state.handleInput(cq), categories = [Category.PLAYER] ) )
 
 
         #Process all commands (dt = timePerFrame)
