@@ -70,11 +70,11 @@ class World():
                 entity.update(dt)
 
     def render(self, surface):
-        self.cam.updateView(self.layers[ACTIVELAYER][0])
+        #self.cam.updateView(self.layers[ACTIVELAYER][0])
         surface.fill(Color('black'))
         for layer in self.layers:
             for entity in layer:
-                entity.applyView(self.cam.applyView)
+                #entity.applyView(self.cam.applyView)
                 entity.draw(surface)
         #self.qTree.drawTree(surface)
 
@@ -92,8 +92,9 @@ class World():
     def buildScene(self):
         
         eTemp = Entity(Category.PLAYER)
-        eTemp.getSprite(self.textures[lynSprite].sprite_sheet, (0,0,21,35))
+        eTemp.getSprite(self.textures[lynSprite].sprite_sheet)
         eTemp.setLocation((100,100))
+        eTemp.setArea((0,0,21,35))
         self.layers[ACTIVELAYER].append(eTemp)
 
         
@@ -101,22 +102,26 @@ class World():
 
 
         eTemp = Entity(Category.ENEMY)
-        eTemp.getSprite(self.textures[brigandSprite].sprite_sheet, (0,0,36,33))
+        eTemp.getSprite(self.textures[brigandSprite].sprite_sheet)
+        eTemp.setArea((0,0,36,33))
         eTemp.setLocation((100+21,100))
         self.layers[ACTIVELAYER].append(eTemp)
         
         eTemp = Entity(Category.ENEMY)
-        eTemp.getSprite(self.textures[brigandSprite].sprite_sheet, (0,0,36,33))
+        eTemp.getSprite(self.textures[brigandSprite].sprite_sheet)
+        eTemp.setArea((0,0,36,33))
         eTemp.setLocation((100,100-33))
         self.layers[ACTIVELAYER].append(eTemp)
         
         eTemp = Entity(Category.ENEMY)
-        eTemp.getSprite(self.textures[brigandSprite].sprite_sheet, (0,0,36,33))
+        eTemp.getSprite(self.textures[brigandSprite].sprite_sheet)
+        eTemp.setArea((0,0,36,33))
         eTemp.setLocation((50,200))
         self.layers[ACTIVELAYER].append(eTemp)
         
         eTemp = Entity(Category.ENEMY)
-        eTemp.getSprite(self.textures[brigandSprite].sprite_sheet, (0,0,36,33))
+        eTemp.getSprite(self.textures[brigandSprite].sprite_sheet)
+        eTemp.setArea((0,0,36,33))
         eTemp.setLocation((200,200))
         self.layers[ACTIVELAYER].append(eTemp)
         
