@@ -4,15 +4,12 @@
 from Command import * 
 import pygame
 from pygame.locals import *
-from InputComponent import *
 
 
 UP = "UP"
 DOWN = "DOWN"
 LEFT = "LEFT"
 RIGHT = "RIGHT"
-
-
 
 
 class InputComponent_Standing:

@@ -3,7 +3,6 @@ import pygame
 import sys
 from pygame.locals import *
 from State import *
-from GraphicsComponent import *
 import Category
 
 from utility import unitVector, getSize
