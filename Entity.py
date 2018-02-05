@@ -2,7 +2,7 @@
 import pygame
 import sys
 from pygame.locals import *
-from StandingState import StandingState
+from State import *
 from GraphicsComponent import *
 import Category
 
@@ -27,20 +27,17 @@ class Entity():
         self.lx        = 1
     	self.ly        = 1
         self.mVCorrection = [0,0]
-        self._state    = StandingState()
+        self.mState    = State(STANDING)
 
-        self._GraphicsComponent = GraphicsComponent()
-        #self._PhysicsComponent  = PhysicsComponent()
-        #self._InputComponent    = InputComponent()#(slef._State)
 
-        self.getSprite  = self._GraphicsComponent.getSprite
-        self.loadSprite = self._GraphicsComponent.loadSprite
+        self.getSprite  = self.mState._GraphicsComponent.getSprite
+        self.loadSprite = self.mState._GraphicsComponent.loadSprite
 
         _uniqueId+=1
 
     def draw(self, surface, drawBounds = False):
         """ calls the grapihcs component """
-        self._GraphicsComponent.update(self, surface)
+        self.mState.draw(self, surface)
 
 
     def update(self, dt):

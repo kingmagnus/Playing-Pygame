@@ -44,8 +44,8 @@ class World():
 
         #Add a command asking for the player entity to look for input
         #note that we use an optional paramiter to pass the lambda access to the command queue
-        commandQueue.append( Command( action = lambda entity, dt, cq = commandQueue: entity._state.handleInput(cq), categories = [Category.PLAYER] ) )
-
+        commandQueue.append( Command( action = lambda entity, dt, cq = commandQueue: entity.mState.handleInput(cq), categories = [Category.PLAYER] ) )
+	#commandQueue.append( Command( action = lambda entity, dt, cq = commandQueue: entity.state.handlePhysics(cq), categories = [Category.PLAYER] ) )
 
         #Process all commands (dt = timePerFrame)
         while commandQueue != []:
