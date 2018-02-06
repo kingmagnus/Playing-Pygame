@@ -2,9 +2,10 @@
 import pygame
 import sys
 from pygame.locals import *
-from StandingState import StandingState
-from GraphicsComponent import *
+from StateFactory import StateFactory
 import Category
+from State import State
+
 
 from utility import unitVector, getSize
 
@@ -15,32 +16,25 @@ _uniqueId = 0
 class Entity():
     """ The Entity class is responsible for individual elements of the scene """
 
-    def __init__(self, category = Category.NONE, Location = [0,0], Direction = [0,0], AABB = pygame.Rect(0,0,0,0)):
+    def __init__(self, category = Category.NONE, stateMaker = State, location = [0,0], direction = [0,0], AABB = pygame.Rect(0,0,0,0)):
         """ sets Velocity, Location, Direction. Type describes the type of the entitiy """
         global _uniqueId
-        self.mDirection = Direction
-        self.mLocation = Location
+        self.mDirection = direction
+        self.mLocation = location
         self.mCategory = category
         self.AABB      = AABB
         self.speed     = 120 #in px/s
-        self.id        = _uniqueId
+        self.id        = _uniqueId #used in collision detection ordering
         self.lx        = 1
     	self.ly        = 1
-        self.mVCorrection = [0,0]
-        self._state    = StandingState()
-
-        self._GraphicsComponent = GraphicsComponent()
-        #self._PhysicsComponent  = PhysicsComponent()
-        #self._InputComponent    = InputComponent()#(slef._State)
-
-        self.getSprite  = self._GraphicsComponent.getSprite
-        self.loadSprite = self._GraphicsComponent.loadSprite
+        #self.mVCorrection = [0,0]
+        self.mState    = stateMaker()
 
         _uniqueId+=1
 
     def draw(self, surface, drawBounds = False):
         """ calls the grapihcs component """
-        self._GraphicsComponent.update(self, surface)
+        self.mState.draw(self, surface)
 
 
     def update(self, dt):
@@ -54,7 +48,7 @@ class Entity():
         #    print "distance", distance, "abs(distance)", (distance[0]**2 + distance[1]**2)**0.5
 
         self.mDirection = [0,0]
-        self.mVCorrection = [0,0]
+        #self.mVCorrection = [0,0]
         self.lx = 1
         self.ly = 1
         self.move(distance)

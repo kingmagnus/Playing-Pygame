@@ -1,6 +1,6 @@
 
 
-class GraphicsComponent:
+class GraphicsComponent_Jumping:
 
     def __init__(self, filename = None):
         if filename != None:
@@ -8,7 +8,7 @@ class GraphicsComponent:
         else:
             self.mSprite = None
     
-    def update(self, entitiy, surface):
+    def draw(self, entitiy, surface):
         surface.blit(self.mSprite, entitiy.mLocation)
 
     def loadSprite(self, filename):
