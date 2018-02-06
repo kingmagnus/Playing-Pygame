@@ -8,8 +8,8 @@ class GraphicsComponent_Standing:
         else:
             self.mSprite = None
     
-    def update(self, entitiy, surface):
-        surface.blit(self.mSprite, entitiy.mLocation)
+    def draw(self, location, surface):
+        surface.blit(self.mSprite, location)
 
     def loadSprite(self, filename):
         """ loads a sprite to the entity with AABB rectangle """

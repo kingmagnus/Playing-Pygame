@@ -26,7 +26,7 @@ class InputComponent_Jumping:
                            LEFT  :Command(action = lambda entity, dt : entity.accelirate((-1, 0)), categories = [Category.PLAYER]),
                            RIGHT :Command(action = lambda entity, dt : entity.accelirate((1, 0)), categories = [Category.PLAYER])}
 
-    def update(self, commandQueue):
+    def handleInput(self, commandQueue):
         if pygame.key.get_pressed()[self.keyMap[UP]]    == True:
             commandQueue.append(self.actionMap[UP])
 

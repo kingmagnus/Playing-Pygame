@@ -7,7 +7,7 @@ STANDING = "Standing"
 JUMPING  = "Jumping"
 
 InputComponent    = { STANDING : InputComponent_Standing,
-		       JUMPING  : InputComponent_Jumping  }
+		      JUMPING  : InputComponent_Jumping  }
 
 from GraphicsComponent_Standing import *
 from GraphicsComponent_Jumping  import *
