@@ -1,7 +1,7 @@
 
 import pygame
 from pygame.locals import *
-from utility import sortEntity, appendUnique, entityCollision, findCollisionTime
+from utility import sortEntity, appendUnique, entityCollision, findCollisionTime, checkInBoundary
 from Entity import Entity
 from itertools import combinations
 
@@ -17,8 +17,8 @@ class QuadTree():
         self.contents   = []
         self.subtree    = []
         self.depth      = depth
-        self.dt         = dt
         self.counter    = 0
+        self.dt         = dt
         global _uniqueId
         self.id   = _uniqueId
         _uniqueId+=1
@@ -29,8 +29,8 @@ class QuadTree():
         """
 
         #does the entitiy lie in the quadtree
-        collisionTime = findCollisionTime(self.dt, entity.AABB, self.boundary, entity.getVelocity())
-        if not collisionTime[0]:
+        inBoundary = checkInBoundary(self.dt, entity, self.boundary)
+        if not inBoundary:
             return False
 
         #are we adding to this level or do we need to pass down the tree
@@ -38,11 +38,11 @@ class QuadTree():
             self.contents.append(entity)
             return True
 
-	    #Make the subtree if the current node is full
+	#Make the subtree if the current node is full
         if len(self.subtree) == 0:
             self.makeSubTrees()
 
-	    #Add the current entity to the tree
+	#Add the current entity to the tree
         for quad in self.subtree:
             quad.addEntity(entity)
 
@@ -52,9 +52,6 @@ class QuadTree():
         """ Pass a list or tupple of entities which will then be added to the quadtree."""
         for e in entities:
             self.addEntity(e)
-
-
-    
 
     def makeSubTrees(self):
         """ The domain is spit into 4 quads and all contents are passed to the relevant quad """
@@ -77,23 +74,12 @@ class QuadTree():
     def findCollisions(self, collisions):
         if self.subtree == []:
             for e1,e2 in combinations(self.contents, 2):
-                collisionTime = findCollisionTime(self.dt, e1.AABB, e2.AABB, e1.getVelocity(), e2.getVelocity())
+                collisionTime = findCollisionTime(self.dt, e1, e2)
                 if collisionTime[0]:
                     collisions.append([sortEntity(e1, e2),collisionTime[1]])
         else:
             for tree in self.subtree:
                 tree.findCollisions(collisions)
-
-
-    def printTree(self):
-        if len(self.contents) == _capacity:
-            for tree in self.subtree:
-                tree.printTree()
-        else:
-            print "node Id", self.id
-            print "entities held:"
-            for e in self.contents:
-                print e.id
 
 
     def drawTree(self, surface):

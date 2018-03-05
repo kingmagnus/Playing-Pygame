@@ -1,6 +1,6 @@
 
 
-from SpriteSheet import *
+from SpriteSheet import SpriteSheet
 
 class SpriteAnimation():
     """Collects images from sprite sheet for animation"""

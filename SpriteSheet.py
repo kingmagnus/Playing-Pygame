@@ -5,7 +5,7 @@ class SpriteSheet():
     """ Class used to access images from a sprite sheet """
 
     def __init__(self, file_name):
-        """ Constuctor. PAss the file name of the spritesheet """
+        """ Constuctor. Pass the file name of the spritesheet """
 
         try:
             self.sprite_sheet = pygame.image.load(file_name).convert()

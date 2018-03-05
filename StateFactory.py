@@ -1,47 +1,73 @@
 
-from State import *
-from Components import *
-from SpriteSheet import *
+from SpriteComponent import SpriteComponent
+from GeometryComponent import GeometryComponent
+from VelocityComponent import VelocityComponent
+from CollisionComponent import CollisionComponent
+from InputComponent import InputComponent
 
+from pygame import Rect
 
 NONE     = "None"
 PLAYER_STANDING = "Player Standing"
 PLAYER_JUMPING  = "Player Jumping"
 ENEMY_STANDING = "Enemy Standing"
+FLOOR = "Floor"
 
 lynSpriteSheet = "lynSpriteSheet"
-lynSprite      = "lynSprite"
+lynStanding      = "lynStanding"
 brigandSpriteSheet = "brigandSpriteSheet"
-brigandSprite = "brigandSprite"
+brigandStanding = "brigandStanding"
+
+class State:
+    None
 
 class StateFactory:
     
-    def __init__(self):
+    def __init__(self):       
+        self._states = { NONE            : State,
+                        PLAYER_STANDING : self._PlayerStandingState,
+                        PLAYER_JUMPING  : self._PlayerStandingState,
+                        ENEMY_STANDING  : self._EnemyStandingState,
+                        FLOOR           : self._FloorState
+                      }
 
-        self._textures = {lynSpriteSheet : SpriteSheet("lynSpriteSheet.gif"),
-                          lynSprite      : SpriteSheet("lynSprite.gif"),
-                          brigandSpriteSheet : SpriteSheet("brigandSprite.gif"),
-                          brigandSprite  : SpriteSheet("brigandSprite.gif")}
-       
-        self.states = { NONE            : State,
-                         PLAYER_STANDING : self._PlayerStandingState,
-                         PLAYER_JUMPING  : self._PlayerStandingState,
-                         ENEMY_STANDING  : self._EnemyStandingState}
-
+    def getState(self, stateID):
+        try:
+            return self._states[stateID]
+        except KeyError:
+            print "--- stateID not in state Dict ---"
+            raise SystemExit
+        
 
     def _PlayerStandingState(self):
         state = State()
-        state.InputComponent = InputComponent[STANDING]()
-        state.GraphicsComponent = GraphicsComponent[STANDING]()
-        state.GraphicsComponent.getSprite(self._textures[lynSprite].sprite_sheet)
+        state.inputComponent = InputComponent()
+        state.spriteComponent = SpriteComponent(lynStanding, Rect(0,0,21,35))
+        state.velocityComponent = VelocityComponent(120,[0,0])
+        state.geometryComponent = GeometryComponent([0,0], 21, 35)
+        state.collisionComponent = CollisionComponent()
         return state
 
     def _EnemyStandingState(self):
         state = State()
-        state.GraphicsComponent = GraphicsComponent[STANDING]()
-        state.GraphicsComponent.getSprite(self._textures[brigandSprite].sprite_sheet)
+        state.spriteComponent = SpriteComponent(brigandStanding, Rect(0,0,36,33))
+        state.velocityComponent = VelocityComponent(120,[0,0])
+        state.geometryComponent = GeometryComponent([0,0], 36, 33)
+        state.collisionComponent = CollisionComponent()
         return state
 
+    def _FloorState(self):
+        state = State()
+        state.geometryComponent = GeometryComponent([100,300],100,10)
+        state.collisionComponent = CollisionComponent()
+        state.polygonComponent = True
+        return state
+        
 
-    
+
+
+
+
+
+
 
