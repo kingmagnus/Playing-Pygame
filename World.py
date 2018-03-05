@@ -1,6 +1,5 @@
 
 
-
 import pygame
 from Entity import *
 from Command import * 
@@ -11,6 +10,12 @@ import CollisionHandling
 import Camera
 
 from StateFactory import *
+
+from DrawingSystem import DrawingSystem
+from CollisionSystem import CollisionSystem
+from MovingSystem import MovingSystem
+from SpriteSystem import SpriteSystem
+from InputSystem import InputSystem
 
 
 
@@ -29,13 +34,16 @@ class World():
     def __init__(self, dt):
         viewSize = (300,300)
         self.spawnLocation = [100,100]
-        self.layers = [[],[],[]]
+        self.entities = []
         self.sf = StateFactory()
         self.buildScene()
-        self.qTree = QuadTree(pygame.Rect(0,0,viewSize[0],viewSize[1]),dt)
-        self.counter = 0
-        self.cam = Camera.Camera(Camera.ViewEntityTrackingMover, viewSize)
+        #self.commandQueue = []
         
+        self.drawingSystem   = DrawingSystem()
+        self.collisionSystem = CollisionSystem(viewSize, dt)
+        self.movingSystem    = MovingSystem(dt)
+        self.spriteSystem    = SpriteSystem()
+        self.inputSystem     = InputSystem()
 
 
     def update(self, commandQueue, dt):
@@ -43,73 +51,45 @@ class World():
 
         #Add a command asking for the player entity to look for input
         #note that we use an optional paramiter to pass the lambda access to the command queue
-        commandQueue.append( Command( action = lambda entity, dt, cq = commandQueue: entity.mState.InputComponent.handleInput(cq), categories = [Category.PLAYER] ) )
-	#commandQueue.append( Command( action = lambda entity, dt, cq = commandQueue: entity.state.handlePhysics(cq), categories = [Category.PLAYER] ) )
 
         #Process all commands (dt = timePerFrame)
-        while commandQueue != []:
-            command = commandQueue.pop(0)
-            for entity in self.layers[ACTIVELAYER]:
-                entity.performCommand(command, dt)
-
-        #broad phase collsion detection
-        self.qTree.empty()
-        self.qTree.addEntities(self.layers[ACTIVELAYER])
-
-        collisions = []
-
-        self.qTree.findCollisions(collisions)
-
-        self.handleCollisions(collisions)
+        #while self.commandQueue != []:
+        #    command = self.commandQueue.pop(0)
+        #    for entity in entities:
+        #        entity.performCommand(command, dt)
 
 
-        #finaly change the world
-        for layer in self.layers:
-            for entity in layer:
-                entity.update(dt)
+        self.inputSystem.handleInput(self.entities)
+        self.collisionSystem.resolveCollisions(self.entities)
+        self.movingSystem.move(self.entities)
 
     def render(self, surface):
-        #self.cam.updateView(self.layers[ACTIVELAYER][0])
-        surface.fill(Color('black'))
-        for layer in self.layers:
-            for entity in layer:
-                #entity.applyView(self.cam.applyView)
-                entity.mState.GraphicsComponent.draw(entity.mLocation, surface)
-        #self.qTree.drawTree(surface)
-
-        #all drawing occurs before the update
-        pygame.display.update()
-
+        self.drawingSystem.draw(self.entities, surface)   
 
                           
     def buildScene(self):
         
-        eTemp = Entity(Category.PLAYER, self.sf.states[PLAYER_STANDING])
-        eTemp.setLocation((100,100))
-        eTemp.setArea((0,0,21,35))
-        self.layers[ACTIVELAYER].append(eTemp)
+        eTemp = Entity(Category.PLAYER, self.sf.getState(PLAYER_STANDING))
+        eTemp.state.geometryComponent.location = [50,100]
+        self.entities.append(eTemp)
 
         #####
 
-        eTemp = Entity(Category.ENEMY, self.sf.states[ENEMY_STANDING])
-        eTemp.setArea((0,0,36,33))
-        eTemp.setLocation((100+21,100))
-        self.layers[ACTIVELAYER].append(eTemp)
+        eTemp = Entity(Category.ENEMY, self.sf.getState(ENEMY_STANDING))
+        eTemp.state.geometryComponent.location = [120,150]
+        self.entities.append(eTemp)
         
-        eTemp = Entity(Category.ENEMY, self.sf.states[ENEMY_STANDING])
-        eTemp.setArea((0,0,36,33))
-        eTemp.setLocation((100,100-33))
-        self.layers[ACTIVELAYER].append(eTemp)
+        eTemp = Entity(Category.ENEMY, self.sf.getState(ENEMY_STANDING))
+        eTemp.state.geometryComponent.location = [100,100]
+        self.entities.append(eTemp)
         
-        eTemp = Entity(Category.ENEMY, self.sf.states[ENEMY_STANDING])
-        eTemp.setArea((0,0,36,33))
-        eTemp.setLocation((50,200))
-        self.layers[ACTIVELAYER].append(eTemp)
+        eTemp = Entity(Category.ENEMY, self.sf.getState(ENEMY_STANDING))
+        eTemp.state.geometryComponent.location = [200,130]
+        self.entities.append(eTemp)
         
-        eTemp = Entity(Category.ENEMY, self.sf.states[ENEMY_STANDING])
-        eTemp.setArea((0,0,36,33))
-        eTemp.setLocation((200,200))
-        self.layers[ACTIVELAYER].append(eTemp)
+        eTemp = Entity(Category.ENEMY, self.sf.getState(ENEMY_STANDING))
+        eTemp.state.geometryComponent.location = [160,30]
+        self.entities.append(eTemp)
         
 
     def handleCollisions(self, collisions):
@@ -120,24 +100,6 @@ class World():
         for collision in collisions:
             if CollisionHandling.checkCategoryPair(collision):
                 #look up the pair's response function in the dictionary ResponseDict
-                a = CollisionHandling.ResponseDict[(collision[0][0].mCategory, collision[0][1].mCategory)]
+                a = CollisionHandling.ResponseDict[(collision[0][0].category, collision[0][1].category)]
                 a(collision)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
