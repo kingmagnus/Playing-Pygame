@@ -2,11 +2,8 @@
 
 import pygame
 from Entity import *
-from Command import * 
-#from SpriteSheet import *
 from QuadTree import QuadTree
 import Category
-import CollisionHandling
 import Camera
 
 from StateFactory import *

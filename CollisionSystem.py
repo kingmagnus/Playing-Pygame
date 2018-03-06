@@ -1,14 +1,14 @@
 
 
-import CollisionDetectionSystem as cds
-import CollisionHandlingSystem as chs
+from CollisionDetectionSystem import CollisionDetectionSystem
+from CollisionHandlingSystem import CollisionHandlingSystem
  
 
 class CollisionSystem:
 
     def __init__(self, viewSize, dt):
-        self.collisionDetectionSystem = cds.CollisionDetectionSystem(viewSize, dt)
-        self.collisionHandlingSystem = chs.CollisionHandlingSystem()
+        self.collisionDetectionSystem = CollisionDetectionSystem(viewSize, dt)
+        self.collisionHandlingSystem = CollisionHandlingSystem()
 
 
     def resolveCollisions(self, entities):

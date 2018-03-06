@@ -1,7 +1,8 @@
 
 import pygame
 import Category
-from State import State
+
+from StateFactory import State 
 
 _uniqueId = 0
 
@@ -16,7 +17,7 @@ class Entity():
     def __init__(self, category = Category.NONE, stateMaker = State):
 
         global _uniqueId
-        self.category = category
+        self.category  = category
         self.id        = _uniqueId #used in collision detection ordering
         self.state     = stateMaker()
 
