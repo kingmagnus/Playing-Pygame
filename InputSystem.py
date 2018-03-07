@@ -10,10 +10,10 @@ import pygame
 
 class InputSystem:
     def __init__(self):
-        self.responseDict = {ReactionKey.AccelerateUp   : Commands.accelerateUp,
-                             ReactionKey.AccelerateDown : Commands.accelerateDown,
-                             ReactionKey.AccelerateLeft : Commands.accelerateLeft, 
-                             ReactionKey.AccelerateRight: Commands.accelerateRight}
+        self.responseDict = {ReactionKey.RunUp    : Commands.RunUp,
+                             ReactionKey.RunDown  : Commands.RunDown,
+                             ReactionKey.RunLeft  : Commands.RunLeft, 
+                             ReactionKey.RunRight : Commands.RunRight}
         
     def handleInput(self, entities):
         # 1. for all entities try to access input component, if not there continue to the next entity
@@ -23,8 +23,8 @@ class InputSystem:
             try:
                 reactions = []
                 for key in entity.state.inputComponent.reactions.keys():
-                    if pygame.key.get_pressed()[key]:
-                        reaction = entity.state.inputComponent.reactions[key]
+                    if pygame.key.get_pressed()[key] == entity.state.inputComponent.reactions[key][0]:
+                        reaction = entity.state.inputComponent.reactions[key][1]
                         self.responseDict[reaction](entity)                    
 
             except AttributeError:

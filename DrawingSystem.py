@@ -5,32 +5,29 @@ import pygame
 from math import cos, sin
 
 from SpriteSheet import SpriteSheet
+import SpriteKey
 
-lynSpriteSheet = "lynSpriteSheet"
-lynStanding      = "lynStanding"
-brigandSpriteSheet = "brigandSpriteSheet"
-brigandStanding = "brigandStanding"
 
 class DrawingSystem:
 
     def __init__(self, spriteSetId = 0):
-        self._textures = { lynSpriteSheet : SpriteSheet("lynSpriteSheet.gif"),
-                           lynStanding      : SpriteSheet("lynSprite.gif"),
-                           brigandSpriteSheet : SpriteSheet("brigandSprite.gif"),
-                           brigandStanding  : SpriteSheet("brigandSprite.gif")
-                         }
+        try:
+            self._textures = { SpriteKey.lynSpriteSheet : SpriteSheet("lynSpriteSheet.gif"),
+                           SpriteKey.lynStanding      : SpriteSheet("lynSprite.gif"),
+                           SpriteKey.brigandSpriteSheet : SpriteSheet("brigandSprite.gif"),
+                           SpriteKey.brigandStanding  : SpriteSheet("brigandSprite.gif"),
+                           SpriteKey.lynRunning  : SpriteSheet("lynRunSprite.gif")}
+        except KeyError:
+            print "\n---DrawingSystem.py: SpriteKey not found---"
+            raise SystemExit
 
     def draw(self, entities, surface):
         surface.fill(Color('black'))
         for entity in entities:
-            try:
-                surface.blit(self._textures[entity.state.spriteComponent.spriteID].getImage(entity.state.spriteComponent.spriteRect), entity.state.geometryComponent.location)
-            except AttributeError:
             #try:
-                entity.state.polygonComponent
-                pygame.draw.polygon(surface, Color('red'), self._getPointList(entity))
+            surface.blit(self._textures[entity.state.spriteComponent.spriteKey].getImage(entity.state.spriteComponent.spriteRect), entity.state.geometryComponent.location)
             #except AttributeError:
-                #continue
+            #    pass
         display.update()
 
 

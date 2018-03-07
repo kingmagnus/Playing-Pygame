@@ -1,15 +1,10 @@
 
-import Reactions
-
-playerStanding = 0
+import InputReactionMaps as IRM
+import StateKey
 
 class InputComponent:
-    def __init__(self, inputId = playerStanding):
-        try:
-            self.reactions = Reactions.Map[inputId]()
-        except KeyError:
-            print "inputID", inputId, "not in the reactions map"
-            raise SystemExit
+    def __init__(self, stateKey = StateKey.PlayerStanding):
+            self.reactions = IRM.getInputReactionKeyMap(stateKey)
 
 
 

@@ -14,7 +14,7 @@ from MovingSystem import MovingSystem
 from SpriteSystem import SpriteSystem
 from InputSystem import InputSystem
 
-
+import StateKey
 
 BACKGROUND  = 0
 ACTIVELAYER = 1
@@ -66,25 +66,25 @@ class World():
                           
     def buildScene(self):
         
-        eTemp = Entity(Category.PLAYER, self.sf.getState(PLAYER_STANDING))
+        eTemp = Entity(Category.PLAYER, self.sf.getState(StateKey.PlayerStanding))
         eTemp.state.geometryComponent.location = [50,100]
         self.entities.append(eTemp)
 
         #####
 
-        eTemp = Entity(Category.ENEMY, self.sf.getState(ENEMY_STANDING))
+        eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [120,150]
         self.entities.append(eTemp)
         
-        eTemp = Entity(Category.ENEMY, self.sf.getState(ENEMY_STANDING))
+        eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [100,100]
         self.entities.append(eTemp)
         
-        eTemp = Entity(Category.ENEMY, self.sf.getState(ENEMY_STANDING))
+        eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [200,130]
         self.entities.append(eTemp)
         
-        eTemp = Entity(Category.ENEMY, self.sf.getState(ENEMY_STANDING))
+        eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [160,30]
         self.entities.append(eTemp)
         
