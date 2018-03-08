@@ -21,7 +21,6 @@ class MovingSystem:
         distance[0] = distance[0]*entity.state.collisionComponent.lx
         distance[1] = distance[1]*entity.state.collisionComponent.ly
 
-        entity.state.velocityComponent.direction = [0,0]
         entity.state.collisionComponent.lx = 1
         entity.state.collisionComponent.ly = 1
 
