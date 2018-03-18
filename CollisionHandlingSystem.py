@@ -6,21 +6,20 @@ class CollisionHandlingSystem:
 
     def handle(self,collisions):
         for collision in collisions:
-            if checkCategoryPair(collision):
+            if self._checkCategoryPair(collision):
                 #look up the pair's response function in the dictionary ResponseDict
-                ResponseDict[(collision[0][0].category, collision[0][1].category)](collision)
+                ResponseDict[(collision.e1.category, collision.e2.category)](collision)
 
 
-def checkCategoryPair(collision):
-    global categoryPairs
-
-    #print (collision[0][0].category, collision[0][1].category)
-
-    if (collision[0][0].category, collision[0][1].category) in categoryPairs:
-        return True
-    if (collision[0][1].category, collision[0][0].category) in categoryPairs:
-        collision[0][0], collision[0][1] = collision[0][1], collision[0][0]
-        return True
-    return False
+    def _checkCategoryPair(self,collision):
+        """ will return a bool if collision is interesting, also formats collision for the response"""
+        #checks if (e1, e2) is an interesting collision
+        # will swap order if needed.
+        if (collision.e1.category, collision.e2.category) in ResponseDict.keys():
+            return True
+        if (collision.e2.category, collision.e1.category) in ResponseDict.keys():
+            collision.e1, collision.e2 = collision.e2, collision.e1
+            return True
+        return False
 
 

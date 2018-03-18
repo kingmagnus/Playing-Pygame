@@ -30,7 +30,6 @@ def _PlayerFloorResponse(collision):
 ResponseDict = {(Category.PLAYER, Category.ENEMY) : _PlayerEnemyResponse,
                 (Category.PLAYER, Category.FLOOR) : _PlayerFloorResponse}
 
-categoryPairs = [(Category.PLAYER, Category.ENEMY), (Category.PLAYER, Category.FLOOR)]
 
 
 
