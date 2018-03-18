@@ -1,6 +1,5 @@
 
-from utility import unitVector
-
+from math import sqrt
 
 class MovingSystem:
 
@@ -15,26 +14,56 @@ class MovingSystem:
             except AttributeError:
                 continue
 
-    def _move(self, entity):
-        distance = [ i * entity.state.velocityComponent.speed * self.dt / 1000. for i in unitVector(entity.state.velocityComponent.direction)]
+    def _move(self, e):
+        
+        self._boundVelocity(e)
+        self._updatePosition(e)
+        self._updateVelocity(e)
 
-        distance[0] = distance[0]*entity.state.collisionComponent.lx
-        distance[1] = distance[1]*entity.state.collisionComponent.ly
 
-        entity.state.velocityComponent.direction = [0,0]
-        entity.state.collisionComponent.lx = 1
-        entity.state.collisionComponent.ly = 1
-
-        entity.state.geometryComponent.location = [sum(i) for i in zip(entity.state.geometryComponent.location, distance)]
-
-    def accelirate(self, entity, accelitation):
-        entity.state.velocityComponent.direction = [sum(i) for i in zip(entity.state.velocityComponent.direction, accelitation)]
-
-    def handleCommand(self, command, entities):
-        if command.systemType == self.type:
-            for entity in entities:
-                if entity.category in command.categories:
-                    command.action(self, entity)
-            return True
-        else:
-            return False
+    def _boundVelocity(self,e):
+        speed = sqrt(e.state.velovityComponent.vx**2 + e.state.velovityComponent.vy**2)
+        ratio = min(speed, e.state.velovityComponent.maxSpeed)/ speed
+        e.state.velovityComponent.vx *= ratio
+        e.state.velovityComponent.vy *= ratio
+        
+    def _updateVelocity(self, e):
+        try:
+            e.state.velocityComponent.vx += e.state.accelerationComponent.ax * e.state.collisionComponent.lx * self.dt
+            e.state.velocityComponent.vy += e.state.accelerationComponent.ay * e.state.collisionComponent.ly * self.dt
+            return
+        except AttributeError:
+            pass
+        
+        try:
+            e.state.velocityComponent.vx += e.state.accelerationComponent.ax * self.dt
+            e.state.velocityComponent.vy += e.state.accelerationComponent.ay * self.dt
+            return
+        except AttributeError:
+            return
+        
+    def _updatePosition(self, e):
+        try:
+            e.state.geometryComponent.location[0] += 0.5 * e.state.accelerationComponent.ax * ( e.state.collisionComponent.lx * self.dt) **2 + e.state.velocityComponent.vx * e.state.collisionComponent.lx * self.dt 
+            e.state.geometryComponent.location[1] += 0.5 * e.state.accelerationComponent.ay * ( e.state.collisionComponent.ly * self.dt) **2 + e.state.velocityComponent.vy * e.state.collisionComponent.ly * self.dt 
+            return
+        except AttributeError:
+            pass
+        
+        try:
+            e.state.geometryComponent.location[0] += 0.5 * e.state.accelerationComponent.ax * ( e.state.collisionComponent.lx * self.dt) **2 + e.state.velocityComponent.vx * self.dt 
+            e.state.geometryComponent.location[1] += 0.5 * e.state.accelerationComponent.ay * ( e.state.collisionComponent.ly * self.dt) **2 + e.state.velocityComponent.vy * self.dt 
+            return
+        except AttributeError:
+            pass
+        
+        try:
+            e.state.geometryComponent.location[0] += e.state.velocityComponent.vx * e.state.collisionComponent.lx * self.dt
+            e.state.geometryComponent.location[1] += e.state.velocityComponent.vy * e.state.collisionComponent.ly * self.dt 
+            return
+        except AttributeError:
+            pass
+        
+        e.state.geometryComponent.location[0] += e.state.velocityComponent.vx
+        e.state.geometryComponent.location[1] += e.state.velocityComponent.vy
+        return
