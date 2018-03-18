@@ -254,11 +254,11 @@ def _findLForVelVel(dt, e1, e2):
     
     if lx_1 < ly_1 < lx_2:
         e1, e2 = sortEntity(e1,e2)
-        return True, Collision(e1, e2, ly_1)
+        return True, Collision(e1, e2, ly_1, "y")
     
     if ly_1 < lx_1 < ly_2:
         e1, e2 = sortEntity(e1,e2)
-        return True, Collision(e1, e2, lx_1)
+        return True, Collision(e1, e2, lx_1, "x")
     
     return False, None
     
