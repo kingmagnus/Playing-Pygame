@@ -34,11 +34,11 @@ def findOverlapForAccel(dt, e1, r1):
     dis_t = (dvy*dt)**2 - 2*day*dt**2*dy0_t
     if dis_t > 0:
         ly_1t = (-dvy*dt + sqrt(dis_t))/(day*dt**2)
-        ly_2t = (-dvy*dt - sqrt(dis_t)/(day*dt**2)
+        ly_2t = (-dvy*dt - sqrt(dis_t))/(day*dt**2)
         ly_1t, ly_2t = min(ly_1t, ly_2t), max(ly_1t, ly_2t)
 
         
-    dis_b = (dvy*dt)**2 - 2*day*dt**2*dy0_b)
+    dis_b = (dvy*dt)**2 - 2*day*dt**2*dy0_b
     if dis_b > 0:
         ly_1b = (-dvy*dt + sqrt(dis_b))/(day*dt**2)
         ly_2b = (-dvy*dt - sqrt(dis_b))/(day*dt**2)
@@ -66,7 +66,7 @@ def findOverlapForAccel(dt, e1, r1):
         temp = (max(0,min(ly_1t, ly_1b)), min(1,max(ly_1t, ly_1b)))
         if temp[0] < temp[1]:
             ly.append(temp)
-        temp = (max(0,min(ly_2t, ly_2b)), min(1,max(ly_2t, ly_2b)))]
+        temp = (max(0,min(ly_2t, ly_2b)), min(1,max(ly_2t, ly_2b)))
         if temp[0] < temp[1]:
             ly.append(temp)
     elif dis_t >0:
@@ -81,7 +81,6 @@ def findOverlapForAccel(dt, e1, r1):
     #find the intersection of dl and [0,1]
     #if intersection l_1 < l_2 else l_2 < l_1
     
-    l = 10
     for l1, l2 in lx, ly:
         if l1[0] < l2[0] < l1[1]:
             return True
@@ -105,8 +104,8 @@ def findOverlapForVel(dt, e1, r1):
 
     lx_1 = -dx0_r / (dvx*dt)
     lx_2 = -dx0_l / (dvx*dt)
-    ly_1 = -dx0_t / (dvx*dt)
-    ly_2 = -dx0_b / (dvx*dt)
+    ly_1 = -dy0_t / (dvy*dt)
+    ly_2 = -dy0_b / (dvy*dt)
     
     lx_1, lx_2 = min(lx_1, lx_2), max(lx_1, lx_2)
     ly_1, ly_2 = min(ly_1, ly_2), max(ly_1, ly_2)

@@ -32,11 +32,11 @@ def _findLForAccelAccel(dt, e1, e2):
     dis_t = (dvy*dt)**2 - 2*day*dt**2*dy0_t
     if dis_t > 0:
         ly_1t = (-dvy*dt + sqrt(dis_t))/(day*dt**2)
-        ly_2t = (-dvy*dt - sqrt(dis_t)/(day*dt**2)
+        ly_2t = (-dvy*dt - sqrt(dis_t))/(day*dt**2)
         ly_1t, ly_2t = min(ly_1t, ly_2t), max(ly_1t, ly_2t)
 
         
-    dis_b = (dvy*dt)**2 - 2*day*dt**2*dy0_b)
+    dis_b = (dvy*dt)**2 - 2*day*dt**2*dy0_b
     if dis_b > 0:
         ly_1b = (-dvy*dt + sqrt(dis_b))/(day*dt**2)
         ly_2b = (-dvy*dt - sqrt(dis_b))/(day*dt**2)
@@ -64,7 +64,7 @@ def _findLForAccelAccel(dt, e1, e2):
         temp = (max(0,min(ly_1t, ly_1b)), min(1,max(ly_1t, ly_1b)))
         if temp[0] < temp[1]:
             ly.append(temp)
-        temp = (max(0,min(ly_2t, ly_2b)), min(1,max(ly_2t, ly_2b)))]
+        temp = (max(0,min(ly_2t, ly_2b)), min(1,max(ly_2t, ly_2b)))
         if temp[0] < temp[1]:
             ly.append(temp)
     elif dis_t >0:
@@ -117,14 +117,14 @@ def _findLForAccelVel(dt, e1, e2):
         lx_1l, lx_2l = min(lx_1l, lx_2l), max(lx_1l, lx_2l)
 
     
-    dis_t = (dvy*dt)**2 - 2*day*dt**2*dy0_t)
+    dis_t = (dvy*dt)**2 - 2*day*dt**2*dy0_t
     if dis_t > 0:
         ly_1t = (-dvy*dt + sqrt(dis_t))/(day*dt**2)
-        ly_2t = (-dvy*dt - sqrt(dis_t)/(day*dt**2)
+        ly_2t = (-dvy*dt - sqrt(dis_t))/(day*dt**2)
         ly_1t, ly_2t = min(ly_1t, ly_2t), max(ly_1t, ly_2t)
 
         
-    dis_b = (dvy*dt)**2 - 2*day*dt**2*dy0_b)
+    dis_b = (dvy*dt)**2 - 2*day*dt**2*dy0_b
     if dis_b > 0:
         ly_1b = (-dvy*dt + sqrt(dis_b))/(day*dt**2)
         ly_2b = (-dvy*dt - sqrt(dis_b))/(day*dt**2)
@@ -152,7 +152,7 @@ def _findLForAccelVel(dt, e1, e2):
         temp = (max(0,min(ly_1t, ly_1b)), min(1,max(ly_1t, ly_1b)))
         if temp[0] < temp[1]:
             ly.append(temp)
-        temp = (max(0,min(ly_2t, ly_2b)), min(1,max(ly_2t, ly_2b)))]
+        temp = (max(0,min(ly_2t, ly_2b)), min(1,max(ly_2t, ly_2b)))
         if temp[0] < temp[1]:
             ly.append(temp)
     elif dis_t >0:
@@ -192,17 +192,17 @@ def _findLForVelVel(dt, e1, e2):
 
     lx_1 = -dx0_r / (dvx*dt)
     lx_2 = -dx0_l / (dvx*dt)
-    ly_1 = -dx0_t / (dvx*dt)
-    ly_2 = -dx0_b / (dvx*dt)
+    ly_1 = -dy0_t / (dvy*dt)
+    ly_2 = -dy0_b / (dvy*dt)
     
     lx_1, lx_2 = min(lx_1, lx_2), max(lx_1, lx_2)
     ly_1, ly_2 = min(ly_1, ly_2), max(ly_1, ly_2)
     
     if lx_1 < ly_1 < lx_2:
-        return true, ly_1
+        return True, ly_1
     
     if ly_1 < lx_1 < ly_2:
-        return true, lx_1
+        return True, lx_1
     
     return False, None
     
@@ -221,17 +221,17 @@ def _findLForVelPos(dt, e1, e2):
 
     lx_1 = -dx0_r / (dvx*dt)
     lx_2 = -dx0_l / (dvx*dt)
-    ly_1 = -dx0_t / (dvx*dt)
-    ly_2 = -dx0_b / (dvx*dt)
+    ly_1 = -dy0_t / (dvy*dt)
+    ly_2 = -dy0_b / (dvy*dt)
     
     lx_1, lx_2 = min(lx_1, lx_2), max(lx_1, lx_2)
     ly_1, ly_2 = min(ly_1, ly_2), max(ly_1, ly_2)
     
     if lx_1 < ly_1 < lx_2:
-        return true, ly_1
+        return True, ly_1
     
     if ly_1 < lx_1 < ly_2:
-        return true, lx_1
+        return True, lx_1
     
     return False, None
     
