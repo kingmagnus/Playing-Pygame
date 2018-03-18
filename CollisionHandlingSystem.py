@@ -1,7 +1,6 @@
 
 
-import CollisionHandling
-from CollisionResponses import *
+from CollisionResponses import ResponseDict
 
 class CollisionHandlingSystem:
 

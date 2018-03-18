@@ -1,22 +1,37 @@
 
-
-
 from math import sqrt
 
-def findOverlapForAccel(dt, e1, r1):
+def inBoundary(dt, e1, r1):
+    """ returns a bool indicating if the entitiy is in the rect over the timestep dt """
+    try:
+            return _inBoundaryForAccel(dt, e1, r1)
+    except AttributeError:
+        try:
+            return _inBoundaryForVel(dt, e1, r1)
+        except AttributeError:
+            try:
+                return _inBoundaryForPos(dt, e1, r1)
+            except AttributeError:
+                return False
+
+def _inBoundaryForAccel(dt, e1, r1):
     # x1 = x10 + vx1*dt*lx + 1/2*ax1*dt^2*lx**2
     # x2 = x20 + vx2*dt*lx + 1/2*ax2*dt^2*lx**2
     # x1 = x2 => 0 = dx0 + dvx*dt*l + 1/2*dax*dt**2*l**2
     # => lx = (-dvx*dt +- sqrt((dvx*dt)**2 - 4*1/2*dax*dt**2*dx0))/(dax*dt**2))
 
-    dx0_r = e1.right - r1.left
-    dx0_l = e1.left - r1.right
-    dy0_t = e1.top - r1.bottom
-    dy0_b = e1.bottom - r1.top
-    dvx = e1.vx 
-    dvy = e1.vy 
-    dax = e1.ax 
-    day = e1.ay 
+    dax = e1.state.accelerationComponent.ax 
+    day = e1.state.accelerationComponent.ay 
+    
+    dvx = e1.state.velocityComponent.vx 
+    dvy = e1.state.velocityComponent.vy
+    
+    dx0_r = e1.state.geometryComponent.location[0] + e1.state.geometryComponent.width - r1.left
+    dx0_l = e1.state.geometryComponent.location[0] - r1.right
+    dy0_t = e1.state.geometryComponent.location[1] - r1.bottom
+    dy0_b = e1.state.geometryComponent.location[0] + e1.state.geometryComponent.height - r1.top
+     
+
 
     dis_r = (dvx*dt)**2 - 2*dax*dt**2*dx0_r
     if dis_r > 0:
@@ -89,19 +104,20 @@ def findOverlapForAccel(dt, e1, r1):
     
     return False
 
-def findOverlapForVel(dt, e1, r1):
+def _inBoundaryForVel(dt, e1, r1):
     # x1 = x10 + vx1*dt*lx 
     # x2 = x20 + vx2*dt*lx
     # x1 = x2 => 0 = dx0 + dvx*dt*lx 
     # => lx = -dx0 / (dvx*dt)
 
-    dx0_r = e1.right - r1.left
-    dx0_l = e1.left - r1.right
-    dy0_t = e1.top - r1.bottom
-    dy0_b = e1.bottom - r1.top
-    dvx = e1.vx
-    dvy = e1.vy
-
+    dvx = e1.state.velocityComponent.vx
+    dvy = e1.state.velocityComponent.vy
+    
+    dx0_r = e1.state.geometryComponent.location[0] + e1.state.geometryComponent.width - r1.left
+    dx0_l = e1.state.geometryComponent.location[0] - r1.right
+    dy0_t = e1.state.geometryComponent.location[1] - r1.bottom
+    dy0_b = e1.state.geometryComponent.location[0] + e1.state.geometryComponent.height - r1.top
+    
     lx_1 = -dx0_r / (dvx*dt)
     lx_2 = -dx0_l / (dvx*dt)
     ly_1 = -dy0_t / (dvy*dt)
@@ -112,7 +128,7 @@ def findOverlapForVel(dt, e1, r1):
     
     return True if lx_1 < ly_1 < lx_2 or ly_1 < lx_1 < ly_2 else False
 
-def findOverlapForPos(dt, e1, r1):
-    return True if e1.left < r1.left < e1.right or r1.left < e1.left < r1.right else False
+def _inBoundaryForPos(dt, e1, r1):
+    return True if e1.state.geometryComponent.location[0] < r1.left < e1.state.geometryComponent.location[0] + e1.state.geometryComponent.width or r1.left < e1.state.geometryComponent.location[0] < r1.right else False
     
     

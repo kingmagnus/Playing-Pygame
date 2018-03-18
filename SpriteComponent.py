@@ -1,6 +1,4 @@
 
-import pygame
-
 class SpriteComponent:
 
     def __init__(self, spriteKey, rect):
