@@ -1,5 +1,5 @@
+from pygame.locals import Color
 import pygame
-from pygame.locals import *
 from math import cos, sin
 
 class MyRect():

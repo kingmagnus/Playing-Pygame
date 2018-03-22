@@ -1,12 +1,9 @@
 
 
-import pygame
-from Entity import *
-from QuadTree import QuadTree
+from Entity import Entity
 import Category
-import Camera
 
-from StateFactory import *
+from StateFactory import StateFactory
 
 from DrawingSystem import DrawingSystem
 from CollisionSystem import CollisionSystem
@@ -89,14 +86,4 @@ class World():
         self.entities.append(eTemp)
         
 
-    def handleCollisions(self, collisions):
-        #if collisions!= []:
-        #    print "collision found"
-        #    print collisions[0][1]
-
-        for collision in collisions:
-            if CollisionHandling.checkCategoryPair(collision):
-                #look up the pair's response function in the dictionary ResponseDict
-                a = CollisionHandling.ResponseDict[(collision[0][0].category, collision[0][1].category)]
-                a(collision)
 

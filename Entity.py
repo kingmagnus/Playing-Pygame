@@ -1,5 +1,4 @@
 
-import pygame
 import Category
 
 from StateFactory import State 

@@ -1,5 +1,31 @@
 
 from math import sqrt
+from Collision import Collision
+from utility import sortEntity
+
+def findCollision(dt, e1, e2):
+    """Returns a bool indicating if the two entities collided and a collision class which records the two entities and the lambda at which they collide"""
+    try:
+        return _findLForAccelAccel(dt, e1, e2)
+    except AttributeError:
+        pass
+    
+    try:
+        return _findLForAccelVel(dt, e1, e2)
+    except AttributeError:
+        pass
+    
+    try:
+        return _findLForVelVel(dt, e1, e2)
+    except AttributeError:
+        pass
+    
+    try:
+        return _findLForVelPos(dt, e1, e2)
+    except AttributeError:
+        pass
+    
+    return False, None
 
 def _findLForAccelAccel(dt, e1, e2):
     # x1 = x10 + vx1*dt*lx + 1/2*ax1*dt^2*lx**2
@@ -7,14 +33,24 @@ def _findLForAccelAccel(dt, e1, e2):
     # x1 = x2 => 0 = dx0 + dvx*dt*l + 1/2*dax*dt**2*l**2
     # => lx = (-dvx*dt +- sqrt((dvx*dt)**2 - 4*1/2*dax*dt**2*dx0))/(dax*dt**2))
 
-    dx0_r = e1.right - e2.left
-    dx0_l = e1.left - e2.right
-    dy0_t = e1.top - e2.bottom
-    dy0_b = e1.bottom - e2.top
-    dvx = e1.vx - e2.vx
-    dvy = e1.vy - e2.vy
-    dax = e1.ax - e2.ax
-    day = e1.ay - e2.ay
+    dax = e1.state.accelerationComponent.ax - e2.state.accelerationComponent.ax
+    day = e1.state.accelerationComponent.ay - e2.state.accelerationComponent.ay
+    
+    try:
+        dvx = e1.state.velocityComponent.vx - e2.state.velocityComponent.vx
+        dvy = e1.state.velocityComponent.vy - e2.state.velocityComponent.vy
+    except AttributeError:
+        print "--- FindingLambda.py _findLForAccelAccel: entity with accelerationComponent has no velocityComponent ---"
+        raise SystemExit
+
+    try:
+        dx0_r = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.width) - e2.state.geometryComponent.location[0]
+        dx0_l = e1.state.geometryComponent.location[0] - (e2.state.geometryComponent.location[0] + e2.state.geometryComponent.width)
+        dy0_t = e1.state.geometryComponent.location[1] - (e2.state.geometryComponent.location[1] + e2.state.geometryComponent.height)
+        dy0_b = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.height) - e2.state.geometryComponent.location[1]
+    except AttributeError:
+        print "--- FindingLambda.py _findLForAccelAccel: entity with accelerationComponent has no geometryComponent ---"
+        raise SystemExit
 
     dis_r = (dvx*dt)**2 - 2*dax*dt**2*dx0_r
     if dis_r > 0:
@@ -85,8 +121,9 @@ def _findLForAccelAccel(dt, e1, e2):
             l = min(l, l2[0])
         if l2[0] < l1[0] < l2[1]:
             l = min(l, l1[0])
-    
-    return False, l if 1 != 10 else True, l
+            
+    e1, e2 = sortEntity(e1,e2)
+    return False, None if 1 != 10 else True, Collision(e1, e2, l)
 
 
 def _findLForAccelVel(dt, e1, e2):
@@ -95,15 +132,26 @@ def _findLForAccelVel(dt, e1, e2):
     # x1 = x2 => 0 = dx0 + dvx*dt*l + 1/2*dax*dt**2*l**2
     # => lx = (-dvx*dt +- sqrt((dvx*dt)**2 - 4*1/2*dax*dt**2*dx0))/(dax*dt**2))
 
-    dx0_r = e1.right - e2.left
-    dx0_l = e1.left - e2.right
-    dy0_t = e1.top - e2.bottom
-    dy0_b = e1.bottom - e2.top
-    dvx = e1.vx - e2.vx
-    dvy = e1.vy - e2.vy
-    dax = e1.ax
-    day = e1.ay
+    try:
+        dax = e1.state.accelerationComponent.ax
+        day = e1.state.accelerationComponent.ay
+    except AttributeError:
+        dax = - e2.state.accelerationComponent.ax
+        day = - e2.state.accelerationComponent.ay
 
+    
+    dvx = e1.state.velocityComponent.vx - e2.state.velocityComponent.vx
+    dvy = e1.state.velocityComponent.vy - e2.state.velocityComponent.vy
+    
+    try:
+        dx0_r = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.width) - e2.state.geometryComponent.location[0]
+        dx0_l = e1.state.geometryComponent.location[0] - (e2.state.geometryComponent.location[0] + e2.state.geometryComponent.width)
+        dy0_t = e1.state.geometryComponent.location[1] - (e2.state.geometryComponent.location[1] + e2.state.geometryComponent.height)
+        dy0_b = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.height) - e2.state.geometryComponent.location[1]
+    except AttributeError:
+        print "--- FindingLambda.py _findLForAccelVel: entity with velocityComponent has no geometryComponent ---"
+        raise SystemExit
+        
     dis_r = (dvx*dt)**2 - 2*dax*dt**2*dx0_r
     if dis_r > 0:
         lx_1r = (-dvx*dt + sqrt(dis_r))/(dax*dt**2)
@@ -173,8 +221,9 @@ def _findLForAccelVel(dt, e1, e2):
             l = min(l, l2[0])
         if l2[0] < l1[0] < l2[1]:
             l = min(l, l1[0])
-    
-    return False, None if 1 != 10 else True, l
+            
+    e1, e2 = sortEntity(e1,e2)
+    return False, None if 1 == 10 else True, Collision(e1, e2, l)
 
 
 def _findLForVelVel(dt, e1, e2):
@@ -183,12 +232,17 @@ def _findLForVelVel(dt, e1, e2):
     # x1 = x2 => 0 = dx0 + dvx*dt*lx 
     # => lx = -dx0 / (dvx*dt)
 
-    dx0_r = e1.right - e2.left
-    dx0_l = e1.left - e2.right
-    dy0_t = e1.top - e2.bottom
-    dy0_b = e1.bottom - e2.top
-    dvx = e1.vx - e2.vx
-    dvy = e1.vy - e2.vy
+    dvx = e1.state.velocityComponent.vx - e2.state.velocityComponent.vx
+    dvy = e1.state.velocityComponent.vy - e2.state.velocityComponent.vy
+
+    try:
+        dx0_r = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.width) - e2.state.geometryComponent.location[0]
+        dx0_l = e1.state.geometryComponent.location[0] - (e2.state.geometryComponent.location[0] + e2.state.geometryComponent.width)
+        dy0_t = e1.state.geometryComponent.location[1] - (e2.state.geometryComponent.location[1] + e2.state.geometryComponent.height)
+        dy0_b = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.height) - e2.state.geometryComponent.location[1]
+    except AttributeError:
+        print "--- FindingLambda.py _findLForVelVel: entity with velocityComponent has no geometryComponent ---"
+        raise SystemExit
 
     lx_1 = -dx0_r / (dvx*dt)
     lx_2 = -dx0_l / (dvx*dt)
@@ -199,10 +253,12 @@ def _findLForVelVel(dt, e1, e2):
     ly_1, ly_2 = min(ly_1, ly_2), max(ly_1, ly_2)
     
     if lx_1 < ly_1 < lx_2:
-        return True, ly_1
+        e1, e2 = sortEntity(e1,e2)
+        return True, Collision(e1, e2, ly_1, "y")
     
     if ly_1 < lx_1 < ly_2:
-        return True, lx_1
+        e1, e2 = sortEntity(e1,e2)
+        return True, Collision(e1, e2, lx_1, "x")
     
     return False, None
     
@@ -228,10 +284,12 @@ def _findLForVelPos(dt, e1, e2):
     ly_1, ly_2 = min(ly_1, ly_2), max(ly_1, ly_2)
     
     if lx_1 < ly_1 < lx_2:
-        return True, ly_1
+        e1, e2 = sortEntity(e1,e2)
+        return True, Collision(e1, e2, ly_1)
     
     if ly_1 < lx_1 < ly_2:
-        return True, lx_1
+        e1, e2 = sortEntity(e1,e2)
+        return True, Collision(e1, e2, lx_1)
     
     return False, None
     

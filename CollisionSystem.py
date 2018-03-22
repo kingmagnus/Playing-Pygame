@@ -7,10 +7,10 @@ from CollisionHandlingSystem import CollisionHandlingSystem
 class CollisionSystem:
 
     def __init__(self, viewSize, dt):
-        self.collisionDetectionSystem = CollisionDetectionSystem(viewSize, dt)
-        self.collisionHandlingSystem = CollisionHandlingSystem()
+        self.CDS = CollisionDetectionSystem(viewSize, dt)
+        self.CHS = CollisionHandlingSystem()
 
 
     def resolveCollisions(self, entities):
-            collisions = self.collisionDetectionSystem.detect(entities)
-            self.collisionHandlingSystem.handle(collisions)
+            collisions = self.CDS.getCollisions(entities)
+            self.CHS.handle(collisions)
