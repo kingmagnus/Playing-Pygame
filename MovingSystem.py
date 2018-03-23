@@ -10,17 +10,28 @@ class MovingSystem:
         __accelRegister = EntityRegister('accelerationComponent', 'velocityComponent', 'geometryComponent')
         __colAccelRegister = EntityRegister('collisionComponent', 'accelerationComponent', 'velocityComponent', 'geometryComponent')
 
-        __velRegister = list(set(__velRegister).difference_update(__colVelRegister, __accelRegister))
-        __colVelRegister = list(set(__colVelRegister).difference_update( __colAccelRegister))
-        __accelRegister = list(set(__colVelRegister).difference_update( __colAccelRegister))
+        __velRegister.difference(__colVelRegister)
+        __velRegister.difference(__accelRegister)
+        __colVelRegister.difference(__colAccelRegister)
+        __accelRegister.difference(__colAccelRegister)
 
         self.dt = dt
+
+    def registerEntities(self, entities, startId):
+        __velRegister.registerEntities(entities, startId)
+        __colVelRegister.registerEntities(entities, startId)
+        __accelRegister.registerEntities(entities, startId)
+        __colAccelRegister.registerEntities(entities, startId)
+
+        __velRegister.difference(__colVelRegister)
+        __velRegister.difference(__accelRegister)
+        __colVelRegister.difference(__colAccelRegister)
+        __accelRegister.difference(__colAccelRegister)
 
     def move(self, entities):
         self.__boundVelocity(entities)
         self.__updatePosition(entities)
         self.__updateVelocity(entities)
-
 
     def __boundVelocity(self,entities):
         for i in __velRegister:

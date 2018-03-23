@@ -1,10 +1,9 @@
 
 
 
-import Commands 
-import ReactionKey
+
 from InputMapper import InputMapper
-from System import EntityRegister
+from EntityRegister import EntityRegister
 
 import pygame
 
@@ -15,6 +14,9 @@ class InputSystem:
         __inputRegister = EntityRegister('inputComponent')
         __commandTable = {} #{int: inputCallback}
         self._inputMapper  = InputMapper()
+
+    def registerEntities(self, entities, startId):
+        __inputRegister.registerEntities(entities, startId)
 
     def handleInput(self, entities):
         mInput = self._inputMapper.MapInput(pygame.key.get_pressed())

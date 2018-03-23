@@ -24,10 +24,13 @@ class EntityRegister:
 
     def registerEntities(self, entities, startId):
         for i in range(startId, len(entities)):
-            if __checkAttributes(entities[i]):
-                self.register.append(i)
+            if i not in self.__register and __checkAttributes(entities[i]):
+                self.__register.append(i)
     
     def reRegisterEntities(self, entities):
-        del self.register[:]
-        self.registerEntities(entities, 0)
+        del self.__register[:]
+        self.__registerEntities(entities, 0)
+
+    def difference(self, register):
+        self.__register = list(set(self.__register).difference(register))
 

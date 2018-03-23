@@ -15,3 +15,6 @@ class CollisionSystem:
     def resolveCollisions(self, entities):
             collisions = self.CDS.getCollisions(entities, __collisionRegister)
             self.CHS.handle(collisions)
+
+    def registerEntities(self, entities, startId):
+        __collisionRegister.registerEntities(entities, startId)
