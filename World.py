@@ -29,6 +29,7 @@ class World():
         viewSize = (300,300)
         self.spawnLocation = [100,100]
         self.entities = []
+        self.newEntities = []
         self.sf = StateFactory()
         self.buildScene()
         #self.commandQueue = []
@@ -59,7 +60,6 @@ class World():
 
     def render(self, surface):
         self.drawingSystem.draw(self.entities, surface)   
-
                           
     def buildScene(self):
         
@@ -85,5 +85,37 @@ class World():
         eTemp.state.geometryComponent.location = [160,30]
         self.entities.append(eTemp)
         
+    def createEntities(self)
+        pastNoEntities = len(self.entities)
+        self.entities.extend(self.newEntities)
+        self.drawingSystem.registerEntities(pastNoEntities, self.entities)
+        self.collisionSystem.registerEntities(pastNoEntities, self.entities)
+        self.movingSystem.registerEntities(pastNoEntities, self.entities)
+        self.spriteSystem.registerEntities(pastNoEntities, self.entities)
+        self.inputSystem.registerEntities(pastNoEntities, self.entities)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
