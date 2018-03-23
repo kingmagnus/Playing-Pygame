@@ -1,7 +1,4 @@
 
-
-
-
 from InputMapper import InputMapper
 from EntityRegister import EntityRegister
 

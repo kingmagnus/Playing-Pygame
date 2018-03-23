@@ -48,10 +48,10 @@ class QuadTree():
 
         return True
     
-    def addEntities(self, entities):
+    def addEntities(self, entities, collisionRegister):
         """ Pass a list or tupple of entities which will then be added to the quadtree."""
-        for e in entities:
-            self.addEntity(e)
+        for i in collisionRegister:
+            self.addEntity(entities[i])
 
     def makeSubTrees(self):
         """ The domain is spit into 4 quads and all contents are passed to the relevant quad """
@@ -71,7 +71,7 @@ class QuadTree():
         self.subtree    = []
 
 
-    def findCollisions(self, collisions):
+    def findCollisions(self, collisions = []):
         if self.subtree == []:
             for e1,e2 in combinations(self.contents, 2):
                 test, collision = findCollision(self.dt, e1, e2)
@@ -80,6 +80,7 @@ class QuadTree():
         else:
             for tree in self.subtree:
                 tree.findCollisions(collisions)
+        return collisions
 
 
     def drawTree(self, surface):
