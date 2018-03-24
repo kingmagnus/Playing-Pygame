@@ -22,10 +22,6 @@ class Entity():
 
         _uniqueId+=1
 
-    def performCommand(self, command, dt):
-        if self.mCategory in command.categories:
-            command.action(self, dt)
-
 
 
 

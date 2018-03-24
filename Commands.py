@@ -1,6 +1,5 @@
 
 import SpriteKey
-import StateKey
 
 from pygame import Rect
 from InputConstants import InputConstants
@@ -18,13 +17,14 @@ def RunUp(mapedInput, entities):
             continue
         try:
             e.state.velocityComponent
-            e.state.velocityComponent.direction[1] = entity.state.velocityComponent.direction[1] - 1
-        except AttributeError:
-            print "\n---AttributeError Commands.py RunUp: entity", entity.id, " with no velocityComponent---"
+            e.state.velocityComponent.direction[1] -= 1
+        except AttributeError as error:
+            print ("\n---AttributeError Commands.py RunUp: entity", e.id, " with no velocityComponent---")
+            print (error)
             raise SystemExit
         return True
 
-def RunDown(entity):
+def RunDown(mapedInput, entities):
     if not mapedInput[InputConstants.State.Down]:
         return False
     for e in entities:
@@ -33,13 +33,14 @@ def RunDown(entity):
         except AttributeError:
             continue
         try:
-            e.state.velocityComponent.direction[1] = entity.state.velocityComponent.direction[1] + 1
-        except AttributeError:
-            print "\n---AttributeError Commands.py RunDown: entity", entity.id, " with no velocityComponent---"
+            e.state.velocityComponent.direction[1] += 1
+        except AttributeError as error:
+            print ("\n---AttributeError Commands.py RunDown: entity", e.id, " with no velocityComponent---")
+            print (error)
             raise SystemExit
         return True
 
-def RunLeft(entity):
+def RunLeft(mapedInput, entities):
     if not mapedInput[InputConstants.State.Left]:
         return False
     if mapedInput[InputConstants.State.Right]:
@@ -50,19 +51,21 @@ def RunLeft(entity):
         except AttributeError:
             continue
         try:
-            e.state.velocityComponent.direction[0] = entity.state.velocityComponent.direction[0] - 1
-        except AttributeError:
-            print "\n---AttributeError Commands.py RunLeft: entity", entity.id, "with no velocityComponent---"
+            e.state.velocityComponent.direction[0] -= 1
+        except AttributeError as error:
+            print ("\n---AttributeError Commands.py RunLeft: entity", e.id, "with no velocityComponent---")
+            print (error)
             raise SystemExit
         try:
             e.state.spriteComponent.spriteKey = SpriteKey.lynRunning
             e.state.spriteComponent.spriteRect = Rect(0,0,64,30)
-        except AttributeError:
-            print "\n---AttributeError Commands.py RunLeft: entity", entity.id, " with no spriteComponent---"
+        except AttributeError as error:
+            print ("\n---AttributeError Commands.py RunLeft: entity", e.id, " with no spriteComponent---")
+            print (error)
             raise SystemExit
         return True
 
-def RunRight(entity):
+def RunRight(mapedInput, entities):
     if not mapedInput[InputConstants.State.Right]:
         return False
     if mapedInput[InputConstants.State.Left]:
@@ -74,15 +77,17 @@ def RunRight(entity):
             continue
 
         try:
-            entity.state.velocityComponent.direction[0] = entity.state.velocityComponent.direction[0] + 1
-        except AttributeError:
-            print "\n---AttributeError Commands.py RunRight: entity", entity.id, " with no velocityComponent---"
+            e.state.velocityComponent.direction[0] +=  1
+        except AttributeError as error:
+            print ("\n---AttributeError Commands.py RunRight: entity", e.id, " with no velocityComponent---")
+            print (error)
             raise SystemExit
         try:
-            entity.state.spriteComponent.spriteKey = SpriteKey.lynRunning
-            entity.state.spriteComponent.spriteRect = Rect(0,0,64,30)
-        except AttributeError:
-            print "\n---AttributeError Commands.py RunRight: entity", entity.id, " with no spriteComponent---\n"
+            e.state.spriteComponent.spriteKey = SpriteKey.lynRunning
+            e.state.spriteComponent.spriteRect = Rect(0,0,64,30)
+        except AttributeError as error:
+            print ("\n---AttributeError Commands.py RunRight: entity", e.id, " with no spriteComponent---\n")
+            print (error)
             raise SystemExit
         return True
 

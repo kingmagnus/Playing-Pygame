@@ -39,8 +39,9 @@ def _findLForAccelAccel(dt, e1, e2):
     try:
         dvx = e1.state.velocityComponent.vx - e2.state.velocityComponent.vx
         dvy = e1.state.velocityComponent.vy - e2.state.velocityComponent.vy
-    except AttributeError:
-        print "--- FindingLambda.py _findLForAccelAccel: entity with accelerationComponent has no velocityComponent ---"
+    except AttributeError as error:
+        print ("--- FindingLambda.py _findLForAccelAccel: entity with accelerationComponent has no velocityComponent ---")
+        print (error)
         raise SystemExit
 
     try:
@@ -48,8 +49,9 @@ def _findLForAccelAccel(dt, e1, e2):
         dx0_l = e1.state.geometryComponent.location[0] - (e2.state.geometryComponent.location[0] + e2.state.geometryComponent.width)
         dy0_t = e1.state.geometryComponent.location[1] - (e2.state.geometryComponent.location[1] + e2.state.geometryComponent.height)
         dy0_b = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.height) - e2.state.geometryComponent.location[1]
-    except AttributeError:
-        print "--- FindingLambda.py _findLForAccelAccel: entity with accelerationComponent has no geometryComponent ---"
+    except AttributeError as error:
+        print ("--- FindingLambda.py _findLForAccelAccel: entity with accelerationComponent has no geometryComponent ---")
+        print (error)
         raise SystemExit
 
     dis_r = (dvx*dt)**2 - 2*dax*dt**2*dx0_r
@@ -148,8 +150,9 @@ def _findLForAccelVel(dt, e1, e2):
         dx0_l = e1.state.geometryComponent.location[0] - (e2.state.geometryComponent.location[0] + e2.state.geometryComponent.width)
         dy0_t = e1.state.geometryComponent.location[1] - (e2.state.geometryComponent.location[1] + e2.state.geometryComponent.height)
         dy0_b = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.height) - e2.state.geometryComponent.location[1]
-    except AttributeError:
-        print "--- FindingLambda.py _findLForAccelVel: entity with velocityComponent has no geometryComponent ---"
+    except AttributeError as error:
+        print ("--- FindingLambda.py _findLForAccelVel: entity with velocityComponent has no geometryComponent ---")
+        print (error)
         raise SystemExit
         
     dis_r = (dvx*dt)**2 - 2*dax*dt**2*dx0_r
@@ -240,8 +243,9 @@ def _findLForVelVel(dt, e1, e2):
         dx0_l = e1.state.geometryComponent.location[0] - (e2.state.geometryComponent.location[0] + e2.state.geometryComponent.width)
         dy0_t = e1.state.geometryComponent.location[1] - (e2.state.geometryComponent.location[1] + e2.state.geometryComponent.height)
         dy0_b = (e1.state.geometryComponent.location[0] + e1.state.geometryComponent.height) - e2.state.geometryComponent.location[1]
-    except AttributeError:
-        print "--- FindingLambda.py _findLForVelVel: entity with velocityComponent has no geometryComponent ---"
+    except AttributeError as error:
+        print ("--- FindingLambda.py _findLForVelVel: entity with velocityComponent has no geometryComponent ---")
+        print (error)
         raise SystemExit
 
     lx_1 = -dx0_r / (dvx*dt)

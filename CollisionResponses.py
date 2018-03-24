@@ -22,7 +22,7 @@ def _PlayerEnemyResponse(collision):
     
 
 def _PlayerFloorResponse(collision):
-    print "player colliding with floor"
+    print ("player colliding with floor")
 
 ResponseDict = {(Category.PLAYER, Category.ENEMY) : _PlayerEnemyResponse,
                 (Category.PLAYER, Category.FLOOR) : _PlayerFloorResponse}

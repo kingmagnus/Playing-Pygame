@@ -26,5 +26,5 @@ class InputConstants:
         Down = 4
 
     class Range:
-        Range_one = 1
-        Range_two = 2
+        Range_One = 1
+        Range_Two = 2

@@ -8,7 +8,6 @@ from StateFactory import StateFactory
 from DrawingSystem import DrawingSystem
 from CollisionSystem import CollisionSystem
 from MovingSystem import MovingSystem
-from SpriteSystem import SpriteSystem
 from InputSystem import InputSystem
 
 import StateKey
@@ -46,7 +45,7 @@ class World():
 
         self.addNewEntities()
         self.inputSystem.handleInput(self.entities)
-        self.collisionSystem.resolveCollisions(self.entities)
+        self.collisionSystem.resolve(self.entities)
         self.movingSystem.move(self.entities)
 
     def render(self, surface):
@@ -76,14 +75,13 @@ class World():
         eTemp.state.geometryComponent.location = [160,30]
         self.newEntities.append(eTemp)
         
-    def addEntities(self)
-        if len(self.newEntities) != 0:
+    def addNewEntities(self):
+        if len(self.newEntities) != 0:  
             startId = len(self.entities)
             self.entities.extend(self.newEntities)
             self.drawingSystem.registerEntities(self.newEntities, startId)
             self.collisionSystem.registerEntities(self.newEntities, startId)
             self.movingSystem.registerEntities(self.newEntities, startId)
-            self.spriteSystem.registerEntities(self.newEntities, startId)
             self.inputSystem.registerEntities(self.newEntities, startId)
             del self.newEntities[:]
 

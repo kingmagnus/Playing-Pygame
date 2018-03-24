@@ -42,22 +42,30 @@
 
 
 from InputConstants import InputConstants
+import pygame 
+from pygame import K_a, K_d, K_s, K_w, K_DOWN, K_RIGHT
 
 #------------------------------------------------#
 
-class _LowerContextID:
+class LowerContextID:
     Directions = 0
     Attacking  = 1
     
-    IDs = [Directions, Attacking]
+    IDs = (Directions, Attacking)
     
 
 class LowerContextMaker:
-
-    def Make(self, ID):
-        return self._IDMap[ID]()
         
-    def _Directions(self):
+    def __getitem__(self, key):
+        try:
+            return self.__IDMap[key]()
+        except IndexError as error:
+            print ("IndexError: list index out of Range in LowerContextMaker")
+            print(error)
+            raise SystemExit
+
+    
+    def __Directions():
         action = {K_a: InputConstants.Action.Tilt_Left,
                   K_d: InputConstants.Action.Tilt_Right,
                   K_s: InputConstants.Action.Tilt_Down,
@@ -68,40 +76,45 @@ class LowerContextMaker:
                   K_w: InputConstants.State.Up}
         return action, state
 
-    def _Attacking(self):
-        action = {K_down : InputConstants.Action.Main_Attack,
-                  K_Right: InputConstants.Action.Special_Attack}
+    def __Attacking():
+        action = {K_DOWN : InputConstants.Action.Main_Attack,
+                  K_RIGHT: InputConstants.Action.Special_Attack}
         state  = {}
         return action, state
 
 
-    _IDMap = {_LowerContextID.Directions : _Directions,
-             _LowerContextID.Attacking  : _Attacking}
+    __IDMap = {LowerContextID.Directions : __Directions,
+               LowerContextID.Attacking  : __Attacking}
 
-class _HigherContextID:
+class HigherContextID:
     TiltAttack = 0
     
-    IDs = [TiltAttack]
+    IDs = (TiltAttack,)
 
-class HigerContextMaker:
+class HigherContextMaker:
 
-    def Make(self, ID):
-        return self._IDMap[ID]()
+    def __getitem__(self, key):
+        try:
+            return self.__IDMap[key]()
+        except IndexError as error:
+            print ("IndexError: list index out of Range in LowerContextMaker")
+            print(error)
+            raise SystemExit
         
-    def _TiltAttack(self):
-        action = {(InputConstants.Action.Main_attack   , InputConstants.Action.Tilt_Right) : InputConstants.Action.Tilt_Right_Main_Attack,
-                  (InputConstants.Action.Main_attack   , InputConstants.Action.Tilt_Left)  : InputConstants.Action.Tilt_Left_Main_Attack,
-                  (InputConstants.Action.Main_attack   , InputConstants.Action.Tilt_Up)    : InputConstants.Action.Tilt_Up_Main_Attack,
-                  (InputConstants.Action.Main_attack   , InputConstants.Action.Tilt_Down)  : InputConstants.Action.Tilt_Down_Main_Attack, 
-                  (InputConstants.Action.Special_attack, InputConstants.Action.Tilt_Right) : InputConstants.Action.Tilt_Right_Special_Attack,
-                  (InputConstants.Action.Special_attack, InputConstants.Action.Tilt_Left)  : InputConstants.Action.Tilt_Left_Special_Attack,
-                  (InputConstants.Action.Special_attack, InputConstants.Action.Tilt_Up)    : InputConstants.Action.Tilt_Up_Special_Attack,
-                  (InputConstants.Action.Special_attack, InputConstants.Action.Tilt_Down)  : InputConstants.Action.Tilt_Down_Special_Attack}
+    def __TiltAttack():
+        action = {(InputConstants.Action.Main_Attack   , InputConstants.Action.Tilt_Right) : InputConstants.Action.Tilt_Right_Main_Attack,
+                  (InputConstants.Action.Main_Attack   , InputConstants.Action.Tilt_Left)  : InputConstants.Action.Tilt_Left_Main_Attack,
+                  (InputConstants.Action.Main_Attack   , InputConstants.Action.Tilt_Up)    : InputConstants.Action.Tilt_Up_Main_Attack,
+                  (InputConstants.Action.Main_Attack   , InputConstants.Action.Tilt_Down)  : InputConstants.Action.Tilt_Down_Main_Attack, 
+                  (InputConstants.Action.Special_Attack, InputConstants.Action.Tilt_Right) : InputConstants.Action.Tilt_Right_Special_Attack,
+                  (InputConstants.Action.Special_Attack, InputConstants.Action.Tilt_Left)  : InputConstants.Action.Tilt_Left_Special_Attack,
+                  (InputConstants.Action.Special_Attack, InputConstants.Action.Tilt_Up)    : InputConstants.Action.Tilt_Up_Special_Attack,
+                  (InputConstants.Action.Special_Attack, InputConstants.Action.Tilt_Down)  : InputConstants.Action.Tilt_Down_Special_Attack}
         state = {}
         return action, state
 
     
-    _IDMap = {_HigherContextID.TiltAttack  : _TiltAttack}
+    __IDMap = {HigherContextID.TiltAttack  : __TiltAttack}
 
 #------------------------------------------------#
 
@@ -110,24 +123,24 @@ class InputLowerContext:
     def __init__(self, lowerContextID):
         self._actionMap, self._stateMap = LowerContextMaker.Make(lowerContextID)
 
-    def MapButtonToAction(self, button, action):
+    def MapButtonToAction(self, button):
         # map a raw button to an action
         if button in self._actionMap.keys():
             action = self._actionMap[button]
-            return True
-        return False
+            return True, action
+        return False, None
 
-    def MapButtonToState(self, button, action):
+    def MapButtonToState(self, button):
         # map a raw button to a state
         if button in self._stateMap.keys():
-            action = self._stateMap[button]
-            return True
-        return False
+            state = self._stateMap[button]
+            return True, state
+        return False, None
 
 class InputRefineContext:
 
     def __init__(self, HigherContextID):
-        self._actionMap, self._stateMap = HigherContextMaker.Make(lowerContextID)
+        self._actionMap, self._stateMap = HigherContextMaker.Make(HigherContextID)
 
     def RefineLowerToHigher(self, mappedInput, action):
         # map a combo of actions to to an action
@@ -169,40 +182,46 @@ class RawInput:
         previouslyPressed = False
 
     def __init__(self): # pass pygame.key.get_pressed()
-        self._buttons = (self.Button(),) * 133 # pygame has 133 Button inputs
+        self.__buttons = (self.Button(),) * 133 # pygame has 133 Button inputs
 
-    def size():
-        return 133
+    def size(self):
+        return len(self.__buttons)
 
     def __getitem__(self, i):
         try:
-            return self._buttons[i]
-        except IndexError:
-            print "IndexError: list index out of Range in RawInput"
+            return self.__buttons[i]
+        except IndexError as error:
+            print ("IndexError: list index out of Range in RawInput")
+            print(error)
             raise SystemExit
 
     def Update(self, rawInput): # pass pygame.key.get_pressed()
+        if rawInput[K_a]:
+            print ("K_a pressed") 
         for i in range(133):
-            self._buttons[i].previouslyPressed = self._buttons[i].pressed
-            self._buttons[i].pressed = rawInput[i]
+            self.__buttons[i].previouslyPressed = self.__buttons[i].pressed
+            self.__buttons[i].pressed = rawInput[i]
 
 #------------------------------------------------#
 
 class InputMapper:
 
-    _rawInput = RawInput()
-    _inputLowerContext = {}                  #{contextID: InputContext}
-    _activeLowerContexts = set()
-    _inputHigherContext = {}                 #{contextID: InputContext}
-    _activeHigherContexts = set()
-    _mappedInput = MappedInput()
-
     def __init__(self):
+        self.__rawInput = RawInput()
+        self.__inputLowerContext = {}                  #{contextID: InputContext}
+        self.__activeLowerContexts = set()
+        self.__inputHigherContext = {}                 #{contextID: InputContext}
+        self.__activeHigherContexts = set()
+        self._mappedInput = MappedInput()
+        
+        lowerContextMaker = LowerContextMaker()
+        higherContextMaker = HigherContextMaker()
+        
         #make all contexts
-        for ID in _LowerContextID.IDs:
-            self._inputLowerContext[ID] = self.InputLowerContext(ID)
-        for ID in _HigherContextID.IDs:
-            self._inputHigherContext[ID] = self.InputHigherContext(ID)
+        for key in LowerContextID.IDs:
+            self.__inputLowerContext[key] = lowerContextMaker[key]
+        for key in HigherContextID.IDs:
+            self.__inputHigherContext[key]= higherContextMaker[key]
 
     def Clear(self):
         self._mappedInput.Actions.clear()
@@ -213,58 +232,60 @@ class InputMapper:
 
         # Play with this to understand it
 
-    def MapInput(self, rawInput): # pass pygame.key.get_pressed()
-        self._rawInput.Update(rawInput) # update pressed and not pressed
-        self.clear() # remover all actions and states from mappedinput
-        for i in self._rawInput.size():
-            _RawToLowerInput(i, rInput[i])
-        _RefineLowerInput() 
-        return _mappedInput        
+    def MapInput(self): # pass pygame.key.get_pressed()
+        self.__rawInput.Update(pygame.key.get_pressed()) # update pressed and not pressed
+        self.Clear() # remover all actions and states from mappedinput
+        for i in range(self.__rawInput.size()):
+            self._RawToLowerInput(i, self.__rawInput[i])
+        self._RefineLowerInput() 
+        return self._mappedInput        
 
     #
     # fns for dealing with contexts
     def pushLowerContext(self, contextID):
-        self._activeLowerContexts.add(self._inputLowerContext[contextID])
+        self.__activeLowerContexts.add(self.__inputLowerContext[contextID])
 
-    def popLowerContext():
-        self._activeLowerContexts.remove(self._inputLowerContext[contextID])
+    def popLowerContext(self, contextID):
+        self.__activeLowerContexts.remove(self.__inputLowerContext[contextID])
 
     def pushHigherContext(self, contextID):
-        self._activeHeigherContexts.add(self._inputHeigherContext[contextID])
+        self.__activeHeigherContexts.add(self.__inputHeigherContext[contextID])
 
-    def popHeigherContext():
-        self._activeHeigherContexts.remove(self._inputHeigherContext[contextID])
+    def popHeigherContext(self, contextID):
+        self.__activeHeigherContexts.remove(self.__inputHeigherContext[contextID])
     # end
     #
 
 
     #
     # fns for finding input
-    def _MapButtonToAction(self, button, actions):
+    def _MapButtonToAction(self, button):
         for context in self._activeLowerContexts:
-            if context.MapButtonToAction(button, action):
-                return True
-        return False
+            test, action = context.MapButtonToAction(button)
+            if test:
+                return True, action
+        return False, None
 
-    def _MapButtonToState(self, button, state):
+    def _MapButtonToState(self, button):
         for context in self._activeLowerContexts:
-            if context.MapButtonToState(button, state):
-                return True
-        return False
+            test, state = context.MapButtonToState(button)
+            if test:
+                return True, state
+        return False, None
 
     def _RawToLowerInput(self, button, buttonState):
-        action = 1
-        state  = 2
 
         #checks if a button was newly pressed to prevent being called again for actions
         if buttonState.pressed and not buttonState.previouslypressed:
-            if self._MapButtonToAction(button, action):
+            test, action = self._MapButtonToAction(button)
+            if test:
                 self._mappedInput.Actions.add(action)
                 return
 
         #checks if a button if held for states
         if buttonState.pressed:
-            if self._MapButtonToState(button, state):
+            test, state = self._MapButtonToAction(button)
+            if test:
                 self._mappedInput.States.add(state)
                 return
 
@@ -272,8 +293,8 @@ class InputMapper:
         #self._MapAndEatButton(button)
 
     def _RefineLowerInput(self):
-        for hContext in self._activeHigherContexts:
-            hContext.RefineLowerToHigher(_mappedInput)
+        for hContext in self.__activeHigherContexts:
+            hContext.RefineLowerToHigher(self._mappedInput)
     # end
     #
 

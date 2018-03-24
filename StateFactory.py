@@ -24,25 +24,27 @@ class StateFactory:
                             StateKey.Floor          : self._FloorState,
                             StateKey.PlayerRunningLeft  : self._PlayerRunningLeftState,
                             StateKey.PlayerRunningRight : self._PlayerRunningRightState}
-        except AttributeError:
-            print "\n---StateFactory.py: factory function or stateKey not defined---\n(work out how to say which)"
+        except AttributeError as error:
+            print ("\n---StateFactory.py: factory function or stateKey not defined---\n(work out how to say which)")
+            print (error)
             raise SystemExit
 
 
     def getState(self, stateKey):
         try:
             return self._states[stateKey]()
-        except KeyError:
-            print "\n---StateFactory.py: stateKey", stateKey, "not in _states---"
+        except KeyError as error:
+            print ("\n---StateFactory.py: stateKey", stateKey, "not in _states---")
+            print (error)
             raise SystemExit
         
         
 
     def _PlayerStandingState(self):
         state = State()
-        state.inputComponent = InputComponent(StateKey.PlayerStanding)
+        state.inputComponent = InputComponent()
         state.spriteComponent = SpriteComponent(SpriteKey.lynStanding, Rect(0,0,21,35))
-        state.velocityComponent = VelocityComponent(120,[0,0])
+        state.velocityComponent = VelocityComponent(0,0,120)
         state.geometryComponent = GeometryComponent([0,0], 21, 35)
         state.collisionComponent = CollisionComponent()
         return state
@@ -50,7 +52,7 @@ class StateFactory:
     def _EnemyStandingState(self):
         state = State()
         state.spriteComponent = SpriteComponent(SpriteKey.brigandStanding, Rect(0,0,36,33))
-        state.velocityComponent = VelocityComponent(120,[0,0])
+        state.velocityComponent = VelocityComponent(0,0,120)
         state.geometryComponent = GeometryComponent([0,0], 36, 33)
         state.collisionComponent = CollisionComponent()
         return state
@@ -64,18 +66,18 @@ class StateFactory:
 
     def _PlayerRunningLeftState():
         state = State()
-        state.inputComponent = InputComponent(StateKey.PlayerRunningLeft)
+        state.inputComponent = InputComponent()
         state.spriteComponent = SpriteComponent(SpriteKey.lynStanding, Rect(0,0,21,35))
-        state.velocityComponent = VelocityComponent(120,[1,0])
+        state.velocityComponent = VelocityComponent(0,0,120)
         state.geometryComponent = GeometryComponent([0,0], 21, 35)
         state.collisionComponent = CollisionComponent()
         return state
         
     def _PlayerRunningRightState():
         state = State()
-        state.inputComponent = InputComponent(StateKey.PlayerRunningRight)
+        state.inputComponent = InputComponent()
         state.spriteComponent = SpriteComponent(SpriteKey.lynStanding, Rect(0,0,21,35))
-        state.velocityComponent = VelocityComponent(120,[1,0])
+        state.velocityComponent = VelocityComponent(0,0,120)
         state.geometryComponent = GeometryComponent([0,0], 21, 35)
         state.collisionComponent = CollisionComponent()
         return state
