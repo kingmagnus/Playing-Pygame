@@ -1,45 +1,38 @@
 
 from pygame import display
 from pygame import Color
-import pygame 
-from math import cos, sin
 
 from SpriteSheet import SpriteSheet
+from EntityRegister import EntityRegister
 
-lynSpriteSheet = "lynSpriteSheet"
-lynStanding      = "lynStanding"
-brigandSpriteSheet = "brigandSpriteSheet"
-brigandStanding = "brigandStanding"
+import SpriteKey
 
 class DrawingSystem:
 
     def __init__(self, spriteSetId = 0):
-        self._textures = { lynSpriteSheet : SpriteSheet("lynSpriteSheet.gif"),
-                           lynStanding      : SpriteSheet("lynSprite.gif"),
-                           brigandSpriteSheet : SpriteSheet("brigandSprite.gif"),
-                           brigandStanding  : SpriteSheet("brigandSprite.gif")
-                         }
+        self.__spriteRegister = EntityRegister(('spriteComponent', 'geometryComponent'))
+        #__rectRegister = EntityRegister('rectComponent', 'geometryComponent')
+        try:
+            self._textures = { SpriteKey.lynSpriteSheet : SpriteSheet("lynSpriteSheet.gif"),
+                           SpriteKey.lynStanding      : SpriteSheet("lynSprite.gif"),
+                           SpriteKey.brigandSpriteSheet : SpriteSheet("brigandSprite.gif"),
+                           SpriteKey.brigandStanding  : SpriteSheet("brigandSprite.gif"),
+                           SpriteKey.lynRunning  : SpriteSheet("lynRunSprite.gif")}
+        except KeyError as error:
+            print ("\n---DrawingSystem.py: SpriteKey not found---")
+            print (error)
+            raise SystemExit
 
     def draw(self, entities, surface):
         surface.fill(Color('black'))
-        for entity in entities:
-            try:
-                surface.blit(self._textures[entity.state.spriteComponent.spriteID].getImage(entity.state.spriteComponent.spriteRect), entity.state.geometryComponent.location)
-            except AttributeError:
-            #try:
-                entity.state.polygonComponent
-                pygame.draw.polygon(surface, Color('red'), self._getPointList(entity))
-            #except AttributeError:
-                #continue
+        self.__drawSprites(surface, entities)
         display.update()
 
+    def registerEntities(self, entities, startId):
+        self.__spriteRegister.registerEntities(entities, startId)
+        print ("drawing system registered", self.__spriteRegister.size() ,"entities")
 
-    def _getPointList(self, entity):
-        xpos = entity.state.geometryComponent.location[0]
-        ypos = entity.state.geometryComponent.location[1]
-        width = entity.state.geometryComponent.width
-        height = entity.state.geometryComponent.height
-        angle = entity.state.geometryComponent.angle
-
-        return  [ (xpos , ypos), (int(xpos + width*cos(angle)), int(ypos + width*sin(angle))), (int(xpos + width*cos(angle) - height*sin(angle)), int(ypos + height*cos(angle) + width*sin(angle))), (int(xpos - height*sin(angle)), int(ypos + height*cos(angle))) ]
+    def __drawSprites(self, surface, entities):
+        for i in self.__spriteRegister:
+            surface.blit(self._textures[entities[i].state.spriteComponent.spriteKey].getImage(entities[i].state.spriteComponent.spriteRect), entities[i].state.geometryComponent.location)
 

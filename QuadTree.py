@@ -1,9 +1,10 @@
 
 import pygame
-from pygame.locals import *
-from utility import sortEntity, appendUnique, entityCollision, findCollisionTime, checkInBoundary
-from Entity import Entity
+from pygame.locals import Color
 from itertools import combinations
+from FindingOverlap import inBoundary
+
+from FindingLambda import findCollision
 
 _maxDepth = 5
 _capacity = 4
@@ -28,9 +29,8 @@ class QuadTree():
             Adds an Entity to the quad tree. If a list of collisions are passed, all collisions found when adding will be append.
         """
 
-        #does the entitiy lie in the quadtree
-        inBoundary = checkInBoundary(self.dt, entity, self.boundary)
-        if not inBoundary:
+        #does the entitiy lie in the quadtree's bondary
+        if not inBoundary(self.dt, entity, self.boundary):
             return False
 
         #are we adding to this level or do we need to pass down the tree
@@ -42,24 +42,24 @@ class QuadTree():
         if len(self.subtree) == 0:
             self.makeSubTrees()
 
-	#Add the current entity to the tree
+	#Add the current entity to the subtree
         for quad in self.subtree:
             quad.addEntity(entity)
 
         return True
     
-    def addEntities(self, entities):
+    def addEntities(self, entities, collisionRegister):
         """ Pass a list or tupple of entities which will then be added to the quadtree."""
-        for e in entities:
-            self.addEntity(e)
+        for i in collisionRegister:
+            self.addEntity(entities[i])
 
     def makeSubTrees(self):
         """ The domain is spit into 4 quads and all contents are passed to the relevant quad """
 
-        self.subtree.append(QuadTree(self.NWBoundary(), self.dt, self.depth + 1))
-        self.subtree.append(QuadTree(self.NEBoundary(), self.dt, self.depth + 1))
-        self.subtree.append(QuadTree(self.SWBoundary(), self.dt, self.depth + 1))
-        self.subtree.append(QuadTree(self.SEBoundary(), self.dt, self.depth + 1))
+        self.subtree.append(QuadTree(self._NWBoundary(), self.dt, self.depth + 1))
+        self.subtree.append(QuadTree(self._NEBoundary(), self.dt, self.depth + 1))
+        self.subtree.append(QuadTree(self._SWBoundary(), self.dt, self.depth + 1))
+        self.subtree.append(QuadTree(self._SEBoundary(), self.dt, self.depth + 1))
 
         #Try to add contents to any tree that wants it
         for quad in self.subtree:
@@ -71,15 +71,16 @@ class QuadTree():
         self.subtree    = []
 
 
-    def findCollisions(self, collisions):
+    def findCollisions(self, collisions = []):
         if self.subtree == []:
             for e1,e2 in combinations(self.contents, 2):
-                collisionTime = findCollisionTime(self.dt, e1, e2)
-                if collisionTime[0]:
-                    collisions.append([sortEntity(e1, e2),collisionTime[1]])
+                test, collision = findCollision(self.dt, e1, e2)
+                if test:
+                    collisions.append(collision)
         else:
             for tree in self.subtree:
                 tree.findCollisions(collisions)
+        return collisions
 
 
     def drawTree(self, surface):
@@ -91,16 +92,16 @@ class QuadTree():
 
 
     """A collection of functions for finding the quarters of the current boudary"""
-    def NWBoundary(self):
+    def _NWBoundary(self):
         return pygame.Rect(self.boundary.left, self.boundary.top, self.boundary.width / 2, self.boundary.height / 2)
 
-    def NEBoundary(self):
+    def _NEBoundary(self):
         return pygame.Rect(self.boundary.left + self.boundary.width / 2, self.boundary.top, self.boundary.width / 2, self.boundary.height / 2)
 
-    def SWBoundary(self):
+    def _SWBoundary(self):
         return pygame.Rect(self.boundary.left, self.boundary.top + self.boundary.height / 2, self.boundary.width / 2, self.boundary.height / 2)
 
-    def SEBoundary(self):
+    def _SEBoundary(self):
         return pygame.Rect(self.boundary.left + self.boundary.width / 2, self.boundary.top + self.boundary.height / 2, self.boundary.width / 2, self.boundary.height / 2)
     """end of helper functions"""
 

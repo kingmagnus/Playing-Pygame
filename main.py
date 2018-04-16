@@ -1,13 +1,13 @@
 
+
 import pygame
 import sys
 
-from pygame.locals import *
+from pygame.locals import QUIT
 
 
 from World  import World
 
-import Camera
 
 def processInput():
     for event in pygame.event.get():
@@ -27,13 +27,12 @@ def main():
     timeSinceRender = timePerFrameInms+1
 
     pygame.init()
-    pygame.display.set_caption('Testing Player')    
+    pygame.display.set_caption('Window')    
     
     viewSize = (300,300)
     surface = pygame.display.set_mode(viewSize)
     commandQueue = []
     world = World(timePerFrameInms)
-    cam = Camera.Camera(Camera.ViewTrackingMover, viewSize)
 
     clock = pygame.time.Clock()
 

@@ -1,37 +1,27 @@
 
-
-
-import Commands 
-import ReactionKey
-
-import pygame
-
+from InputMapper import InputMapper
+from EntityRegister import EntityRegister
 
 
 class InputSystem:
     def __init__(self):
-        self.responseDict = {ReactionKey.AccelerateUp   : Commands.accelerateUp,
-                             ReactionKey.AccelerateDown : Commands.accelerateDown,
-                             ReactionKey.AccelerateLeft : Commands.accelerateLeft, 
-                             ReactionKey.AccelerateRight: Commands.accelerateRight}
-        
+        self.__inputRegister = EntityRegister(('inputComponent'))
+        self.__commandTable = {} #{int: inputCallback}
+        self.inputMapper  = InputMapper()
+
+    def registerEntities(self, entities, startId):
+        self.__inputRegister.registerEntities(entities, startId)
+
     def handleInput(self, entities):
-        # 1. for all entities try to access input component, if not there continue to the next entity
-        # 2. for each key in the entity's input component, use the appropriate response from the respeonse dictionry 
-        
-        for entity in entities:
-            try:
-                reactions = []
-                for key in entity.state.inputComponent.reactions.keys():
-                    if pygame.key.get_pressed()[key]:
-                        reaction = entity.state.inputComponent.reactions[key]
-                        self.responseDict[reaction](entity)                    
+        mInput = self.inputMapper.MapInput()
+        for i in mInput.Actions:
+            print (i)
+        for i in mInput.States:
+            print (i)  
+        #for key in sorted(self._callbackTable):
+        #    for i in self.__inputRegister:
+        #        self.__commandTable[key](mInput, entities[i])
 
-            except AttributeError:
-                continue
-            except KeyError:
-                print "---reaction key not found in responseDict---"
-                raise SystemExit
-            
-
+    def AddCommand(self, command, priority):
+        self.__commandTable[priority] = command
 

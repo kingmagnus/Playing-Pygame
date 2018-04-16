@@ -9,9 +9,10 @@ class SpriteSheet():
 
         try:
             self.sprite_sheet = pygame.image.load(file_name).convert()
-        except pygame.error, message:
-            print "Unable to load spritesheet ", file_name
-            raise SystemExit, message
+        except pygame.error as message:
+            print ("Unable to load spritesheet ", file_name)
+            print (message)
+            raise SystemExit
 
 
     def getImage(self, rectangle):

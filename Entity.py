@@ -1,5 +1,4 @@
 
-import pygame
 import Category
 
 from StateFactory import State 
@@ -14,18 +13,14 @@ class Entity():
     #The components should be in tables where the components are indexed by the entity id.
     #I've not done this becuase I cannot think of how to do it without pointers
 
-    def __init__(self, category = Category.NONE, stateMaker = State):
+    def __init__(self, category = Category.NONE, state = State()):
 
         global _uniqueId
         self.category  = category
         self.id        = _uniqueId #used in collision detection ordering
-        self.state     = stateMaker()
+        self.state     = state
 
         _uniqueId+=1
-
-    def performCommand(self, command, dt):
-        if self.mCategory in command.categories:
-            command.action(self, dt)
 
 
 
