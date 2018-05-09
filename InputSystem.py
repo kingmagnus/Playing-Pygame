@@ -1,13 +1,13 @@
 
-from InputMapper import InputMapper
+from InputMapper import InputMapper, ContextID
 from EntityRegister import EntityRegister
 
 
 class InputSystem:
     def __init__(self):
         self.__inputRegister = EntityRegister(('inputComponent'))
-        self.__commandTable = {} #{int: inputCallback}
         self.inputMapper  = InputMapper()
+        self.inputMapper.pushContext(ContextID.Directions)
 
     def registerEntities(self, entities, startId):
         self.__inputRegister.registerEntities(entities, startId)
@@ -22,6 +22,9 @@ class InputSystem:
         #    for i in self.__inputRegister:
         #        self.__commandTable[key](mInput, entities[i])
 
-    def AddCommand(self, command, priority):
-        self.__commandTable[priority] = command
+    def pushContext(self, contextID):
+        self.inputMapper.pushContext(contextID)
+
+    def popContext(self, contextID):
+        self.inputMapper.popContext(contextID)
 

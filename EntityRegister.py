@@ -9,7 +9,7 @@ class EntityRegister:
     def __iter__(self):
         return self
 
-    def __next__(self):
+    def next(self):
         if self.__count == len(self.__register):
             self.__count = 0
             raise StopIteration

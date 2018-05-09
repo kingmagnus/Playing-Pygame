@@ -1,5 +1,7 @@
 
 
+#Do Not Use 0!!!
+
 class InputConstants:
     class Action:
         #Lower Actions
@@ -20,10 +22,10 @@ class InputConstants:
         Tilt_Right_Special_Attack = 108
 
     class State:
-        Right = 1
-        Left = 2 
-        Up = 3
-        Down = 4
+        Right = 200
+        Left = 300
+        Up = 400
+        Down = 500
 
     class Range:
         Range_One = 1
