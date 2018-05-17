@@ -107,11 +107,18 @@ class InputContext:
 #------------------------------------------------#
 
 class MappedInput:
-    __slots__ = 'Actions', 'States'
+    __slots__ = 'Actions', 'States', 'LastActions', 'LastStates'
 
     Actions = set()
     States  = set()
+
+    LastActions = set()
+    LastStates  = set()
     
+    def refresh(self):
+        LastActions, LastStates = Actions, States
+        Actions, States = set(), set()
+
     def EatAction(self, action):
         self.Actions.remove(action)
 

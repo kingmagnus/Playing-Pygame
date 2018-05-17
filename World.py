@@ -9,6 +9,9 @@ from DrawingSystem import DrawingSystem
 from CollisionSystem import CollisionSystem
 from MovingSystem import MovingSystem
 from InputSystem import InputSystem
+from IntentSystem import IntentSystem
+
+from InputMapper import MappedInput
 
 import StateKey
 
@@ -31,12 +34,16 @@ class World():
         self.newEntities = []
         self.sf = StateFactory()
         self.buildScene()
-        #self.commandQueue = []
+
+        self.mappedInput     = MappedInput()
         
         self.drawingSystem   = DrawingSystem()
         self.collisionSystem = CollisionSystem(viewSize, dt)
         self.movingSystem    = MovingSystem(dt)
         self.inputSystem     = InputSystem()
+        self.intentSystem   = IntentSystem()
+
+
 
 
     def update(self, commandQueue, dt):
@@ -44,9 +51,12 @@ class World():
         #note that we use an optional paramiter to pass the lambda access to the command queue
 
         self.addNewEntities()
-        self.inputSystem.handleInput(self.entities)
+        self.inputSystem.handleInput(self.mappedInput)
+        self.intentSystem.setPlayerIntent(self.mappedInput, self.entities)
+        self.movingSystem.accelWithIntent(self.entities)
         self.collisionSystem.resolve(self.entities)
         self.movingSystem.move(self.entities)
+        self.drawingSystem.changeSprites(self.entities)
 
     def render(self, surface):
         self.drawingSystem.draw(self.entities, surface)   
@@ -58,7 +68,7 @@ class World():
         self.newEntities.append(eTemp)
 
         #####
-
+        """
         eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [120,150]
         self.newEntities.append(eTemp)
@@ -74,7 +84,8 @@ class World():
         eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [160,30]
         self.newEntities.append(eTemp)
-        
+        """
+
     def addNewEntities(self):
         if len(self.newEntities) != 0:  
             startId = len(self.entities)
@@ -83,6 +94,7 @@ class World():
             self.collisionSystem.registerEntities(self.newEntities, startId)
             self.movingSystem.registerEntities(self.newEntities, startId)
             self.inputSystem.registerEntities(self.newEntities, startId)
+            self.intentSystem.registerEntities(self.newEntities, startId)
             del self.newEntities[:]
 
 

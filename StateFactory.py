@@ -3,7 +3,9 @@ from SpriteComponent import SpriteComponent
 from GeometryComponent import GeometryComponent
 from VelocityComponent import VelocityComponent
 from CollisionComponent import CollisionComponent
+from AccelerationComponent import AccelerationComponent
 from InputComponent import InputComponent
+from IntentComponent import IntentComponent
 
 import StateKey
 import SpriteKey
@@ -43,9 +45,11 @@ class StateFactory:
     def _PlayerStandingState(self):
         state = State()
         state.inputComponent = InputComponent()
-        state.spriteComponent = SpriteComponent(SpriteKey.lynStanding, Rect(0,0,21,35))
+        state.intentComponent = IntentComponent()
+        state.spriteComponent = SpriteComponent(SpriteKey.lynSpriteSheet, Rect(0,0,35,45))
         state.velocityComponent = VelocityComponent(0,0,120)
         state.geometryComponent = GeometryComponent([0,0], 21, 35)
+        state.accelerationComponent = AccelerationComponent(0,0)
         state.collisionComponent = CollisionComponent()
         return state
 

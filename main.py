@@ -22,7 +22,7 @@ def main():
     global world
     global cam
 
-    FPS = 60
+    FPS = 1
     timePerFrameInms = 1.0/FPS*1000
     timeSinceRender = timePerFrameInms+1
 

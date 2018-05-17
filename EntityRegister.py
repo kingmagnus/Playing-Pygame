@@ -1,6 +1,7 @@
 
 
 class EntityRegister:
+    __slots__ = "__attributes", "__register", "__count"
     def __init__(self, attributes):
         self.__attributes = attributes
         self.__register = []
@@ -8,6 +9,12 @@ class EntityRegister:
 
     def __iter__(self):
         return self
+
+    def printRegister(self):
+        print self.__register
+
+    def printAttributes(self):
+        print self.__attributes
 
     def next(self):
         if self.__count == len(self.__register):
