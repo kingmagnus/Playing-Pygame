@@ -2,9 +2,7 @@
 import pygame
 from pygame.locals import Color
 from itertools import combinations
-from FindingOverlap import inBoundary
-
-from FindingLambda import findCollision
+import FindingLambda as fl
 
 _maxDepth = 5
 _capacity = 4
@@ -30,7 +28,7 @@ class QuadTree():
         """
 
         #does the entitiy lie in the quadtree's bondary
-        if not inBoundary(self.dt, entity, self.boundary):
+        if not fl.inBoundary(self.dt, entity, self.boundary):
             return False
 
         #are we adding to this level or do we need to pass down the tree
@@ -63,7 +61,8 @@ class QuadTree():
 
         #Try to add contents to any tree that wants it
         for quad in self.subtree:
-            quad.addEntities(self.contents)
+            for e in self.contents:
+                quad.addEntity(e)
 
 
     def empty(self):
@@ -74,7 +73,7 @@ class QuadTree():
     def findCollisions(self, collisions = []):
         if self.subtree == []:
             for e1,e2 in combinations(self.contents, 2):
-                test, collision = findCollision(self.dt, e1, e2)
+                test, collision = fl.findCollision(self.dt, e1, e2)
                 if test:
                     collisions.append(collision)
         else:

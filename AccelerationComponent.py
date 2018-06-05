@@ -3,7 +3,7 @@
 
 class AccelerationComponent:
 
-    def __init__(self, ax = 0, ay= 0, maxAccel = 120):
+    def __init__(self, ax = 0, ay= 0, maxAccel = 60.0):
         self.ax = ax
         self.ay = ay
-        self.maxAccel = maxAccel
+        self.maxAccel = float(maxAccel)

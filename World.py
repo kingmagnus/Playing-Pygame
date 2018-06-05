@@ -9,11 +9,13 @@ from DrawingSystem import DrawingSystem
 from CollisionSystem import CollisionSystem
 from MovingSystem import MovingSystem
 from InputSystem import InputSystem
-from IntentSystem import IntentSystem
 
 from InputMapper import MappedInput
 
+from Observer import Publisher
+
 import StateKey
+
 
 BACKGROUND  = 0
 ACTIVELAYER = 1
@@ -35,52 +37,56 @@ class World():
         self.sf = StateFactory()
         self.buildScene()
 
-        self.mappedInput     = MappedInput()
-        
-        self.drawingSystem   = DrawingSystem()
-        self.collisionSystem = CollisionSystem(viewSize, dt)
-        self.movingSystem    = MovingSystem(dt)
-        self.inputSystem     = InputSystem()
-        self.intentSystem   = IntentSystem()
+        #Systems for logic
+        self.drawingSystem   = DrawingSystem(self.entities)
+        self.collisionSystem = CollisionSystem(self.entities, viewSize, dt)
+        self.movingSystem    = MovingSystem(self.entities, dt)
+        self.inputSystem     = InputSystem(self.entities)
+
+        #publishers send messages between systems
+        self.inputSystem.addObserver(self.movingSystem)
+        self.inputSystem.addObserver(self.drawingSystem)
 
 
-
-
-    def update(self, commandQueue, dt):
+    def update(self):
         #Add a command asking for the player entity to look for input
         #note that we use an optional paramiter to pass the lambda access to the command queue
 
         self.addNewEntities()
-        self.inputSystem.handleInput(self.mappedInput)
-        self.intentSystem.setPlayerIntent(self.mappedInput, self.entities)
-        self.movingSystem.accelWithIntent(self.entities)
-        self.collisionSystem.resolve(self.entities)
-        self.movingSystem.move(self.entities)
-        self.drawingSystem.changeSprites(self.entities)
+        self.inputSystem.handleInput()
+        self.collisionSystem.resolve()
+        self.movingSystem.timestep()
 
     def render(self, surface):
-        self.drawingSystem.draw(self.entities, surface)   
+        self.drawingSystem.draw(surface)   
                           
     def buildScene(self):
         
         eTemp = Entity(Category.PLAYER, self.sf.getState(StateKey.PlayerStanding))
         eTemp.state.geometryComponent.location = [50,100]
         self.newEntities.append(eTemp)
-
+        
         #####
-        """
+        
+        
         eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [120,150]
         self.newEntities.append(eTemp)
+        
+
         
         eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [100,100]
         self.newEntities.append(eTemp)
         
+    
+        """
         eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [200,130]
         self.newEntities.append(eTemp)
+        """
         
+        """
         eTemp = Entity(Category.ENEMY, self.sf.getState(StateKey.EnemyStanding))
         eTemp.state.geometryComponent.location = [160,30]
         self.newEntities.append(eTemp)
@@ -88,37 +94,9 @@ class World():
 
     def addNewEntities(self):
         if len(self.newEntities) != 0:  
-            startId = len(self.entities)
             self.entities.extend(self.newEntities)
-            self.drawingSystem.registerEntities(self.newEntities, startId)
-            self.collisionSystem.registerEntities(self.newEntities, startId)
-            self.movingSystem.registerEntities(self.newEntities, startId)
-            self.inputSystem.registerEntities(self.newEntities, startId)
-            self.intentSystem.registerEntities(self.newEntities, startId)
-            del self.newEntities[:]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            self.newEntities = []
+            self.drawingSystem.registerEntities()
+            self.collisionSystem.registerEntities()
+            self.movingSystem.registerEntities()
+            self.inputSystem.registerEntities()

@@ -5,7 +5,8 @@ from VelocityComponent import VelocityComponent
 from CollisionComponent import CollisionComponent
 from AccelerationComponent import AccelerationComponent
 from InputComponent import InputComponent
-from IntentComponent import IntentComponent
+
+from FSMStateFactory import StateIDs
 
 import StateKey
 import SpriteKey
@@ -21,11 +22,8 @@ class StateFactory:
         try:      
             self._states = {StateKey.Empty          : State,
                             StateKey.PlayerStanding : self._PlayerStandingState,
-                            StateKey.PlayerJumping  : self._PlayerStandingState,
                             StateKey.EnemyStanding  : self._EnemyStandingState,
-                            StateKey.Floor          : self._FloorState,
-                            StateKey.PlayerRunningLeft  : self._PlayerRunningLeftState,
-                            StateKey.PlayerRunningRight : self._PlayerRunningRightState}
+                            StateKey.Floor          : self._FloorState,}
         except AttributeError as error:
             print ("\n---StateFactory.py: factory function or stateKey not defined---\n(work out how to say which)")
             print (error)
@@ -44,9 +42,8 @@ class StateFactory:
 
     def _PlayerStandingState(self):
         state = State()
-        state.inputComponent = InputComponent()
-        state.intentComponent = IntentComponent()
-        state.spriteComponent = SpriteComponent(SpriteKey.lynSpriteSheet, Rect(0,0,35,45))
+        state.inputComponent = InputComponent(StateIDs.Standing)
+        state.spriteComponent = SpriteComponent(SpriteKey.lynStanding)
         state.velocityComponent = VelocityComponent(0,0,120)
         state.geometryComponent = GeometryComponent([0,0], 21, 35)
         state.accelerationComponent = AccelerationComponent(0,0)
@@ -55,7 +52,7 @@ class StateFactory:
 
     def _EnemyStandingState(self):
         state = State()
-        state.spriteComponent = SpriteComponent(SpriteKey.brigandStanding, Rect(0,0,36,33))
+        state.spriteComponent = SpriteComponent(SpriteKey.brigandStanding)
         state.velocityComponent = VelocityComponent(0,0,120)
         state.geometryComponent = GeometryComponent([0,0], 36, 33)
         state.collisionComponent = CollisionComponent()
@@ -66,24 +63,6 @@ class StateFactory:
         state.geometryComponent = GeometryComponent([100,300],100,10)
         state.collisionComponent = CollisionComponent()
         state.polygonComponent = True
-        return state
-
-    def _PlayerRunningLeftState():
-        state = State()
-        state.inputComponent = InputComponent()
-        state.spriteComponent = SpriteComponent(SpriteKey.lynStanding, Rect(0,0,21,35))
-        state.velocityComponent = VelocityComponent(0,0,120)
-        state.geometryComponent = GeometryComponent([0,0], 21, 35)
-        state.collisionComponent = CollisionComponent()
-        return state
-        
-    def _PlayerRunningRightState():
-        state = State()
-        state.inputComponent = InputComponent()
-        state.spriteComponent = SpriteComponent(SpriteKey.lynStanding, Rect(0,0,21,35))
-        state.velocityComponent = VelocityComponent(0,0,120)
-        state.geometryComponent = GeometryComponent([0,0], 21, 35)
-        state.collisionComponent = CollisionComponent()
         return state
 
 

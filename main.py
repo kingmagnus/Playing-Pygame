@@ -9,7 +9,7 @@ from pygame.locals import QUIT
 from World  import World
 
 
-def processInput():
+def checkQuit():
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -22,7 +22,7 @@ def main():
     global world
     global cam
 
-    FPS = 1
+    FPS = 60
     timePerFrameInms = 1.0/FPS*1000
     timeSinceRender = timePerFrameInms+1
 
@@ -31,14 +31,14 @@ def main():
     
     viewSize = (300,300)
     surface = pygame.display.set_mode(viewSize)
-    commandQueue = []
-    world = World(timePerFrameInms)
+    world = World(1.0/FPS)
 
     clock = pygame.time.Clock()
 
     #main game loop
     while True:
         timeSinceRender += clock.tick()
+        #timeSinceRender is in milliseconds 
         #print "timeSinceRender", timeSinceRender
         #counter = counter +1
 
@@ -46,9 +46,9 @@ def main():
             #Incase we take more than one frame to update
             timeSinceRender -= timePerFrameInms
             #We update untill it is time to draw the frame
-            processInput()
+            checkQuit()
             """ Game logic is held in the World class """
-            world.update(commandQueue, timePerFrameInms)
+            world.update()
 
         world.render(surface)
         

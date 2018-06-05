@@ -6,24 +6,25 @@ from pygame import Rect
 
 class CollisionSystem:
 
-    def __init__(self, viewSize, dt):
-        self.__collisionRegister = EntityRegister(('collisionComponent'))
+    def __init__(self, entities, viewSize, dt):
+        self.entities = entities
+        self.__collisionRegister = EntityRegister('collisionComponent')
         self.__qTree = QuadTree(Rect(0,0,viewSize[0],viewSize[1]),dt)
         self.__collisions = []
         self.__responseDict = {}
 
-    def registerEntities(self, entities, startId):
-        self.__collisionRegister.registerEntities(entities, startId)
+    def registerEntities(self):
+        self.__collisionRegister.registerEntities(self.entities)
 
-    def resolve(self, entities):
-            self.__findCollisions(entities)
+    def resolve(self):
+            self.__findCollisions()
             self.__handle()
 
-    def __findCollisions(self, entities):
+    def __findCollisions(self):
         #broad phase collsion detection
         self.__qTree.empty()
         del self.__collisions[:]
-        self.__qTree.addEntities(entities, self.__collisionRegister)
+        self.__qTree.addEntities(self.entities, self.__collisionRegister)
         self.__collisions = self.__qTree.findCollisions()
 
     def __handle(self):

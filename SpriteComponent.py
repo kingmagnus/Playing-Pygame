@@ -1,6 +1,5 @@
 
 class SpriteComponent:
 
-    def __init__(self, spriteKey, rect):
+    def __init__(self, spriteKey):
         self.spriteKey = spriteKey
-        self.spriteRect = rect
