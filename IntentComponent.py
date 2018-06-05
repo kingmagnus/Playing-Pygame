@@ -1,3 +1,0 @@
-
-class IntentComponent:
-	intentID = None
