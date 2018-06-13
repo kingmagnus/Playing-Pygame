@@ -11,8 +11,6 @@ from FSMStateFactory import StateIDs
 import StateKey
 import SpriteKey
 
-from pygame import Rect
-
 class State:
     None
 
@@ -30,7 +28,7 @@ class StateFactory:
             raise SystemExit
 
 
-    def getState(self, stateKey):
+    def makeState(self, stateKey):
         try:
             return self._states[stateKey]()
         except KeyError as error:

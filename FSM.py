@@ -1,4 +1,3 @@
-
 from FSMStateFactory import StateFactory, StateIDs
 
 
@@ -10,11 +9,15 @@ class FSM:
 			self.transitionFns = ()
 			self.entryFn = None
 
-		def process(self, data):
-			self.entryFn(data)
+		def process(self, inputEvent):
+			"""
+				Called from InputSystem when an a transition is made.
+				Takes an inputEvent which it adds inforation to for publishing to other systems.
+			"""
+			self.entryFn(inputEvent)
 			for transitionFn in self.transitionFns:
-				transitionFn(data)
-			self.exitFn(data)
+				transitionFn(inputEvent)
+			self.exitFn(inputEvent)
 
 	def __init__(self):
 		self.states = {
@@ -43,29 +46,30 @@ class FSM:
 
 	#----------------------------------------------------------------#
 
-	def run(self, data, entity):
-		test, trans = self.__checkTransitions(data, entity)
+	#fns for running the fsm with an inputcomponent
+
+	def run(self, inputData, **kargs):
+		test, trans = self.__checkTransitions(inputData, kargs)
 		if test == True:
-			self.__setTransitionFns(trans, entity)
+			self.__setTransitionFns(trans, kargs["inputComponent"])
 			return True
 		return False
 
-	def __checkTransitions(self, data, entity):
-		state = self.states[entity.state.inputComponent.stateID]
+	def __checkTransitions(self, inputData, components):
+		state = self.states[components["inputComponent"].stateID]
 		for transition in state.transitions:
-			if False not in (testFn(data, entity) for testFn in transition.testFns): #A good line of code :p
+			if False not in (testFn(inputData, components) for testFn in transition.testFns): #A good line of code :D
 				return True, transition
 		return False, None
 
-	def __setTransitionFns(self, trans, entity):
-		self.transitionFunctions.exitFn = self.states[entity.state.inputComponent.stateID].exitFn
-		entity.state.inputComponent.stateID = trans.endID
+	def __setTransitionFns(self, trans, inputComponent):
+		self.transitionFunctions.exitFn = self.states[inputComponent.stateID].exitFn
+		inputComponent.stateID = trans.endID
 		self.transitionFunctions.transitionFns = trans.transitionFns
 
 		try:
 			self.transitionFunctions.entryFn = self.states[trans.endID].entryFn
 		except KeyError, message:
 			print "FSM.__setTransitionFns - Attempted to transition to a state", trans.endID ,"that does not exist"
-			print message
-			raise SystemExit
+			raise KeyError, message
 

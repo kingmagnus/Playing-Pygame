@@ -12,29 +12,29 @@ class TransFns:
 
 class TestFns(object):
 	@staticmethod
-	def State_Right(mInput, entity):
+	def State_Right(mInput, components):
 		return (InputConstants.States.Right in mInput.States 
 			and InputConstants.States.Left not in mInput.States)
 
 	@staticmethod
-	def State_Left(mInput, entity):
+	def State_Left(mInput, components):
 		return (InputConstants.States.Right not in mInput.States 
 			and InputConstants.States.Left in mInput.States)
 
 	@staticmethod
-	def Vel_Left(mInput, entity):
-		return entity.state.velocityComponent.vx < 0
+	def Vel_Left(mInput, components):
+		return components["velocityComponent"].vx < 0
 
 	@staticmethod
-	def Vel_Right(mInput, entity):
-		return entity.state.velocityComponent.vx > 0
+	def Vel_Right(mInput, components):
+		return components["velocityComponent"].vx > 0
 
 	@staticmethod
-	def Vel_Max(mInput, entity):
-		return abs(entity.state.velocityComponent.vx) >= entity.state.velocityComponent.maxSpeedx
+	def Vel_Max(mInput, components):
+		return abs(components["velocityComponent"].vx) >= components["velocityComponent"].maxSpeedx
 
 	@staticmethod
-	def NoInput(mInput, entity):
+	def NoInput(mInput, components):
 		return mInput.isEmpty()
 
 	class TimeDelay:

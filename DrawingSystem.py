@@ -12,25 +12,25 @@ from Observer import Observer
 
 class DrawingSystem(Observer):
 
-    def __init__(self, entities, spriteSetId = 0):
-        self.entities = entities
-        self.__spriteRegister = EntityRegister('spriteComponent', 'geometryComponent')
-        #__rectRegister = EntityRegister('rectComponent', 'geometryComponent')
+    def __init__(self, positionComponents, spriteComponents, geometryComponents):
+        self.spriteComponents = spriteComponents
+        self.positionComponents = positionComponents
+        self.geometryComponents = geometryComponents
 
         try:
-            self.__textures = { 
-                                SpriteKey.lynSpriteSheet : SpriteSheet("lynSpriteSheet.gif"),
-                                SpriteKey.lynStanding      : SpriteSheet("lynSprite.gif"),
-                                SpriteKey.brigandSpriteSheet : SpriteSheet("brigandSprite.gif"),
-                                SpriteKey.brigandStanding  : SpriteSheet("brigandSprite.gif"),
-                                SpriteKey.lynRunning  : SpriteSheet("lynRunSprite.gif")
-                            }
-            self.__spriteRect = { 
+            self.__texturesDict = { 
+                SpriteKey.lynSpriteSheet : SpriteSheet("lynSpriteSheet.gif"),
+                SpriteKey.lynStanding : SpriteSheet("lynSprite.gif"),
+                SpriteKey.brigandSpriteSheet : SpriteSheet("brigandSprite.gif"),
+                SpriteKey.brigandStanding : SpriteSheet("brigandSprite.gif"),
+                SpriteKey.lynRunning : SpriteSheet("lynRunSprite.gif")
+            }
+            self.__spriteRectDict = { 
                 SpriteKey.lynSpriteSheet : Rect(0,0,36,33),
-                SpriteKey.lynStanding      : Rect(0,0,33,44),
+                SpriteKey.lynStanding : Rect(0,0,33,44),
                 SpriteKey.brigandSpriteSheet : Rect(0,0,36,33),
-                SpriteKey.brigandStanding  : Rect(0,0,37,46),
-                SpriteKey.lynRunning  : Rect(0,0,52,51),
+                SpriteKey.brigandStanding : Rect(0,0,37,46),
+                SpriteKey.lynRunning : Rect(0,0,52,51),
             }
         except KeyError as error:
             print("\n---DrawingSystem.py: SpriteKey not found---")
@@ -43,42 +43,43 @@ class DrawingSystem(Observer):
         self.__drawCollRect(surface)
         display.update()
 
-    def registerEntities(self):
-        self.__spriteRegister.registerEntities(self.entities)
-        print "DrawingSystem", self.__spriteRegister
-
     def __drawSprites(self, surface):
-        for i in self.__spriteRegister:
+        for ID in self.spriteComponents.keys():
             try:
-                key = self.entities[i].state.spriteComponent.spriteKey
-                loc = self.entities[i].state.geometryComponent.location
-                surface.blit(self.__textures[key].getImage(self.__spriteRect[key]), loc)
-            except IndexError, message:
-                print "\nIndex", i," in spriteRegister out of range"
-                print "spriteRegister", self.__spriteRegister
-                print "len(entities)", len(self.entities)
-                print "entities", self.entities, "\n"
-                raise IndexError, message
+                key = self.spriteComponents[ID].spriteKey
+                loc = self.positionComponents[ID]
+            except KeyError, message:
+                print "\nEntity id", ID," in spriteComponents but not positionComponents\n"
+                print "spriteComponents\n", self.spriteComponents
+                print "positionComponents\n", self.positionComponents
+                raise KeyError, message
+            try:
+                surface.blit(self.__texturesDict[key].getImage(self.__spriteRectDict[key]), [loc.x, loc.y])
+            except KeyError, message:
+                if key not in self.__texturesDict.keys():
+                    print "\nspriteKey", key, "not found in __texturesDict"
+                if key not in self.__spriteRectDict.keys():
+                    print "\nspriteKey", key, "not found in __spriteRectDict"
+                raise KeyError, message
+
+
 
     def __drawCollRect(self, surface):
-        for i in self.__spriteRegister:
-            e = self.entities[i]
-            x = e.state.geometryComponent.location[0]
-            y = e.state.geometryComponent.location[1]
-            width = e.state.geometryComponent.width
-            height = e.state.geometryComponent.height
-            draw.rect(surface, Color('red'), Rect(x,y,width, height), 1)
+        for ID in self.spriteComponents.keys():
+            loc = self.positionComponents[ID]
+            geom = self.geometryComponents[ID]
+            draw.rect(surface, Color('red'), Rect(loc.x, loc.y, geom.width, geom.height), 1)
 
 
     def processEvent(self, event):
         if event.entryState == "Standing":
-            self.entities[event.entityID].state.spriteComponent.spriteKey = SpriteKey.lynStanding
+            self.spriteComponents[event.entityID].spriteKey = SpriteKey.lynStanding
             
         if event.entryState == "Running" and event.direction == "Right":
-            self.entities[event.entityID].state.spriteComponent.spriteKey = SpriteKey.lynRunning
+            self.spriteComponents[event.entityID].spriteKey = SpriteKey.lynRunning
 
         if event.entryState == "Running" and event.direction == "Left":
-            self.entities[event.entityID].state.spriteComponent.spriteKey = SpriteKey.lynRunning
+            self.spriteComponents[event.entityID].spriteKey = SpriteKey.lynRunning
                 
 
 

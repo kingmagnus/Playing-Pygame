@@ -7,62 +7,41 @@ import FindingLambda as fl
 _maxDepth = 5
 _capacity = 4
 
-_uniqueId = 0
-
 class QuadTree():
 
-    def __init__(self, boundary, dt, depth = 0):
+    def __init__(self, boundary, depth = 0):
         self.boundary   = boundary
         self.contents   = []
         self.subtree    = []
         self.depth      = depth
-        self.counter    = 0
-        self.dt         = dt
-        global _uniqueId
-        self.id   = _uniqueId
-        _uniqueId+=1
-
-    def addEntity(self, entity):
-        """ 
-            Adds an Entity to the quad tree. If a list of collisions are passed, all collisions found when adding will be append.
-        """
+    
+    def addEntities(self, lambdaFinder):
+        """ Pass a list or tupple of entities which will then be added to the quadtree."""
 
         #does the entitiy lie in the quadtree's bondary
-        if not fl.inBoundary(self.dt, entity, self.boundary):
-            return False
+        esInBounds = lambdaFinder.inBoundary(self.boundary)
 
         #are we adding to this level or do we need to pass down the tree
         if len(self.contents) < _capacity or self.depth > _maxDepth:
-            self.contents.append(entity)
-            return True
-
-	#Make the subtree if the current node is full
+            self.contents.extend(esInBounds)
+            return
+        
+        #Make the subtree if the current node is full
         if len(self.subtree) == 0:
-            self.makeSubTrees()
+            self.makeSubTrees(lambdaFinder, esInBounds)
 
-	#Add the current entity to the subtree
-        for quad in self.subtree:
-            quad.addEntity(entity)
-
-        return True
-    
-    def addEntities(self, entities, collisionRegister):
-        """ Pass a list or tupple of entities which will then be added to the quadtree."""
-        for i in collisionRegister:
-            self.addEntity(entities[i])
-
-    def makeSubTrees(self):
+    def makeSubTrees(self, lambdaFinder, esInBounds):
         """ The domain is spit into 4 quads and all contents are passed to the relevant quad """
 
-        self.subtree.append(QuadTree(self._NWBoundary(), self.dt, self.depth + 1))
-        self.subtree.append(QuadTree(self._NEBoundary(), self.dt, self.depth + 1))
-        self.subtree.append(QuadTree(self._SWBoundary(), self.dt, self.depth + 1))
-        self.subtree.append(QuadTree(self._SEBoundary(), self.dt, self.depth + 1))
+        self.subtree.append(QuadTree(self._NWBoundary(), self.depth + 1))
+        self.subtree.append(QuadTree(self._NEBoundary(), self.depth + 1))
+        self.subtree.append(QuadTree(self._SWBoundary(), self.depth + 1))
+        self.subtree.append(QuadTree(self._SEBoundary(), self.depth + 1))
 
         #Try to add contents to any tree that wants it
         for quad in self.subtree:
-            for e in self.contents:
-                quad.addEntity(e)
+            quad.addEntities(lambdaFinder, self.contents)
+            quad.addEntities(lambdaFinder, esInBounds)
 
 
     def empty(self):
@@ -70,15 +49,12 @@ class QuadTree():
         self.subtree    = []
 
 
-    def findCollisions(self, collisions = []):
+    def findCollisions(self, lambdaFinder, collisions = []):
         if self.subtree == []:
-            for e1,e2 in combinations(self.contents, 2):
-                test, collision = fl.findCollision(self.dt, e1, e2)
-                if test:
-                    collisions.append(collision)
+            collisions.append(lambdaFinder.findCollisions(self.contents))
         else:
             for tree in self.subtree:
-                tree.findCollisions(collisions)
+                tree.findCollisions(lambdaFinder, collisions)
         return collisions
 
 
@@ -104,6 +80,5 @@ class QuadTree():
         return pygame.Rect(self.boundary.left + self.boundary.width / 2, self.boundary.top + self.boundary.height / 2, self.boundary.width / 2, self.boundary.height / 2)
     """end of helper functions"""
 
-
-
+    #-------------------------------------------
 
